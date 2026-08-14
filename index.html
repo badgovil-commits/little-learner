@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Little Learner</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;background:#fff6e5;color:#292929;min-height:100vh}
+  .app{max-width:900px;margin:auto;min-height:100vh;padding:28px 22px 40px}
+  header{text-align:center;padding:28px 10px 30px}
+  .logo{font-size:58px;line-height:1;font-weight:800;letter-spacing:-2px}
+  .logo span{font-size:55px;margin-right:12px}
+  .tagline{font-size:23px;color:#777;margin-top:18px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  .card{border:0;border-radius:34px;background:#fff;min-height:300px;box-shadow:0 10px 28px rgba(80,65,35,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s}
+  .card:active{transform:scale(.96)}
+  .icon{font-size:92px;height:120px;display:flex;align-items:center;justify-content:center}
+  .card h2{font-size:34px;color:#1685e8;margin:18px 0 0;font-weight:750}
+  .screen{display:none}
+  .screen.active{display:block}
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .back{border:0;background:#666;color:#fff;border-radius:50%;width:54px;height:54px;font-size:30px;cursor:pointer}
+  .title{font-size:34px;font-weight:800}
+  .lesson-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .lesson{background:#fff;border:0;border-radius:30px;min-height:230px;box-shadow:0 8px 22px rgba(80,65,35,.08);font-size:30px;font-weight:750;cursor:pointer;padding:20px}
+  .lesson .big{font-size:80px;display:block;margin-bottom:12px}
+  .lesson small{display:block;color:#777;font-size:18px;margin-top:7px}
+  .animal{font-size:76px}
+  .color-dot{width:105px;height:105px;border-radius:50%;margin:auto}
+  .number{font-size:90px}
+  .letter{font-size:90px}
+  .message{text-align:center;font-size:24px;margin:24px 0;color:#666}
+  @media(max-width:520px){
+    .app{padding:20px 16px 34px}
+    header{padding-top:22px}
+    .logo{font-size:42px}.logo span{font-size:40px}
+    .tagline{font-size:19px}
+    .grid{gap:16px}.card{min-height:235px;border-radius:30px}.icon{font-size:70px;height:92px}.card h2{font-size:25px}
+    .title{font-size:28px}.lesson-grid{gap:14px}.lesson{min-height:190px;border-radius:25px;font-size:24px}.lesson .big{font-size:64px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <section id="home" class="screen active">
+    <header>
+      <div class="logo"><span>🌈</span>Little Learner</div>
+      <div class="tagline">Learn, play and have fun!</div>
+    </header>
+    <main class="grid">
+      <button class="card" onclick="openScreen('animals')"><div class="icon">🐾</div><h2>Animals</h2></button>
+      <button class="card" onclick="openScreen('colors')"><div class="icon">🎨</div><h2>Colors</h2></button>
+      <button class="card" onclick="openScreen('numbers')"><div class="icon">🔢</div><h2>Numbers</h2></button>
+      <button class="card" onclick="openScreen('abc')"><div class="icon">🔤</div><h2>ABC</h2></button>
+    </main>
+  </section>
+
+  <section id="animals" class="screen">
+    <div class="topbar"><button class="back" onclick="goHome()">‹</button><div class="title">🐾 Animals</div></div>
+    <div class="message">Tap an animal to hear its name!</div>
+    <div class="lesson-grid">
+      <button class="lesson" onclick="speak('Cat')"><span class="big animal">🐱</span>Cat<small>Meow!</small></button>
+      <button class="lesson" onclick="speak('Dog')"><span class="big animal">🐶</span>Dog<small>Woof!</small></button>
+      <button class="lesson" onclick="speak('Lion')"><span class="big animal">🦁</span>Lion<small>Roar!</small></button>
+      <button class="lesson" onclick="speak('Elephant')"><span class="big animal">🐘</span>Elephant<small>Trumpet!</small></button>
+      <button class="lesson" onclick="speak('Cow')"><span class="big animal">🐮</span>Cow<small>Moo!</small></button>
+      <button class="lesson" onclick="speak('Monkey')"><span class="big animal">🐵</span>Monkey<small>Ooh ooh!</small></button>
+    </div>
+  </section>
+
+  <section id="colors" class="screen">
+    <div class="topbar"><button class="back" onclick="goHome()">‹</button><div class="title">🎨 Colors</div></div>
+    <div class="message">Tap a color and learn its name!</div>
+    <div class="lesson-grid">
+      <button class="lesson" onclick="speak('Red')"><span class="big color-dot" style="background:#ef4444"></span>Red</button>
+      <button class="lesson" onclick="speak('Blue')"><span class="big color-dot" style="background:#3b82f6"></span>Blue</button>
+      <button class="lesson" onclick="speak('Yellow')"><span class="big color-dot" style="background:#facc15"></span>Yellow</button>
+      <button class="lesson" onclick="speak('Green')"><span class="big color-dot" style="background:#22c55e"></span>Green</button>
+      <button class="lesson" onclick="speak('Orange')"><span class="big color-dot" style="background:#f97316"></span>Orange</button>
+      <button class="lesson" onclick="speak('Purple')"><span class="big color-dot" style="background:#a855f7"></span>Purple</button>
+    </div>
+  </section>
+
+  <section id="numbers" class="screen">
+    <div class="topbar"><button class="back" onclick="goHome()">‹</button><div class="title">🔢 Numbers</div></div>
+    <div class="message">Let's count together!</div>
+    <div class="lesson-grid">
+      <button class="lesson" onclick="speak('One')"><span class="big number">1</span>One</button>
+      <button class="lesson" onclick="speak('Two')"><span class="big number">2</span>Two</button>
+      <button class="lesson" onclick="speak('Three')"><span class="big number">3</span>Three</button>
+      <button class="lesson" onclick="speak('Four')"><span class="big number">4</span>Four</button>
+      <button class="lesson" onclick="speak('Five')"><span class="big number">5</span>Five</button>
+      <button class="lesson" onclick="speak('Six')"><span class="big number">6</span>Six</button>
+    </div>
+  </section>
+
+  <section id="abc" class="screen">
+    <div class="topbar"><button class="back" onclick="goHome()">‹</button><div class="title">🔤 ABC</div></div>
+    <div class="message">Tap a letter to hear it!</div>
+    <div class="lesson-grid">
+      <button class="lesson" onclick="speak('A')"><span class="big letter">A</span>Apple 🍎</button>
+      <button class="lesson" onclick="speak('B')"><span class="big letter">B</span>Ball ⚽</button>
+      <button class="lesson" onclick="speak('C')"><span class="big letter">C</span>Cat 🐱</button>
+      <button class="lesson" onclick="speak('D')"><span class="big letter">D</span>Dog 🐶</button>
+      <button class="lesson" onclick="speak('E')"><span class="big letter">E</span>Elephant 🐘</button>
+      <button class="lesson" onclick="speak('F')"><span class="big letter">F</span>Fish 🐟</button>
+    </div>
+  </section>
+</div>
+<script>
+function openScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){openScreen('home')}
+function speak(text){
+  if('speechSynthesis' in window){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=.8; u.pitch=1.15;
+    speechSynthesis.speak(u);
+  }
+}
+</script>
+</body>
+</html>
