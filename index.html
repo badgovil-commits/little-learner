@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f4f6ff">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Little Learner</title>
 <style>
 :root{
@@ -100,7 +103,7 @@ h1{font-size:48px;margin:0;font-weight:800;letter-spacing:-1.5px}
 const IMG = {
   dog: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Dog_portrait.jpg',
   cat: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Katze_Portrait.jpg',
-  lion:'https://commons.wikimedia.org/wiki/Special:Redirect/file/The_LION_.jpg',
+  lion:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Lion_portrait.jpg',
   cow: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/A_Cow.jpg',
   apple:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Red_apple.jpg',
   ball:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Basketball.png',
@@ -240,17 +243,17 @@ const quizBank = [
   {type:'animal',question:'Where is the Dog? 🐶',answer:'Dog',options:['Dog','Cat','Cow','Lion']},
   {type:'animal',question:'Where is the Lion? 🦁',answer:'Lion',options:['Lion','Cat','Cow','Dog']},
   {type:'color',question:'Where is Red? 🔴',answer:'Red',options:['Red','Blue','Green','Yellow']},
-  {type:'color',question:'Where is Blue? 🔵',answer:'Blue',options:['Green','Blue','Purple','Orange']},
-  {type:'color',question:'Where is Green? 🟢',answer:'Green',options:['Pink','Brown','Green','Yellow']},
-  {type:'color',question:'Where is Yellow? 🟡',answer:'Yellow',options:['Purple','Red','Yellow','Orange']},
+  {type:'color',question:'Where is Blue? 🔵',answer:'Blue',options:['Red','Blue','Green','Yellow']},
+  {type:'color',question:'Where is Green? 🟢',answer:'Green',options:['Red','Blue','Green','Yellow']},
+  {type:'color',question:'Where is Yellow? 🟡',answer:'Yellow',options:['Red','Blue','Green','Yellow']},
   {type:'number',question:'Where is 7? 🔢',answer:'7',options:['7','4','9','2']},
   {type:'number',question:'Where is 3? 🔢',answer:'3',options:['8','3','5','1']},
-  {type:'number',question:'Where is 10? 🔢',answer:'10',options:['6','9','10','12']},
   {type:'number',question:'Where is 5? 🔢',answer:'5',options:['2','8','5','7']},
+  {type:'number',question:'Where is 2? 🔢',answer:'2',options:['2','6','4','8']},
   {type:'letter',question:'Where is A? 🔤',answer:'A',options:['A','B','C','D']},
-  {type:'letter',question:'Where is M? 🔤',answer:'M',options:['N','W','M','H']},
-  {type:'letter',question:'Where is S? 🔤',answer:'S',options:['C','S','G','Z']},
-  {type:'letter',question:'Where is T? 🔤',answer:'T',options:['F','L','T','P']}
+  {type:'letter',question:'Where is B? 🔤',answer:'B',options:['A','B','C','D']},
+  {type:'letter',question:'Where is C? 🔤',answer:'C',options:['A','B','C','D']},
+  {type:'letter',question:'Where is D? 🔤',answer:'D',options:['A','B','C','D']}
 ];
 
 function answer(btn,targetId){
@@ -334,6 +337,13 @@ function renderLetters(){
 function answerGeneric(btn,targetId){ answer(btn,targetId); }
 
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+
+// Prevent an older PWA/service-worker cache from keeping the previous screen.
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{});
+  if(window.caches) caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});
+}
+
 render();
 </script>
 </body>
