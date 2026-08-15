@@ -77,11 +77,16 @@
   }
   .quiz-box{background:#fff;border-radius:26px;padding:22px;box-shadow:0 10px 28px #243b5320;text-align:center}
   .quiz-question{font-size:28px;font-weight:900;margin:10px 0 20px}
-  .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .quiz-option{
-    border:0;background:#eef0ff;border-radius:18px;padding:16px;font-size:20px;font-weight:800;
-    color:#4f48bb;cursor:pointer
+    border:0;background:#eef0ff;border-radius:22px;padding:12px;min-height:125px;
+    font-size:20px;font-weight:800;color:#4f48bb;cursor:pointer;
+    box-shadow:0 7px 18px #243b5318;display:flex;align-items:center;justify-content:center;
   }
+  .quiz-option:active{transform:scale(.95)}
+  .quiz-animal{font-size:72px;line-height:1.1}
+  .quiz-number,.quiz-letter{font-size:58px;font-weight:900;color:#6c63ff}
+  .quiz-color{width:82px;height:82px;border-radius:20px;box-shadow:0 5px 14px #243b5325}
   .message{min-height:30px;font-weight:800;margin-top:15px}
   .sound-note{font-size:12px;color:#858da0;margin-top:12px}
   @media(max-width:430px){
@@ -266,29 +271,41 @@ document.querySelectorAll(".tab").forEach(tab=>{
 });
 
 /* ---------- Quiz ---------- */
-const quiz=[
-  {q:"Which animal says Moo? 🐮",a:"Cow",o:["Cow","Cat","Dog","Monkey"]},
-  {q:"What comes after 2?",a:"3",o:["1","3","5","4"]},
-  {q:"Which letter starts Apple? 🍎",a:"A",o:["A","B","C","D"]},
-  {q:"Which colour is the sky usually?",a:"Blue",o:["Blue","Green","Pink","Brown"]},
-  {q:"Which animal makes a trumpet-like sound? 🐘",a:"Elephant",o:["Elephant","Cat","Horse","Sheep"]}
-];
-let qi=0;
-const qEl=document.getElementById("quizQuestion"),oEl=document.getElementById("quizOptions"),mEl=document.getElementById("quizMessage");
-function loadQuiz(){
-  const x=quiz[qi];qEl.textContent=x.q;mEl.textContent="";
-  oEl.innerHTML="";
-  [...x.o].sort(()=>Math.random()-.5).forEach(opt=>{
-    const b=document.createElement("button");b.className="quiz-option";b.textContent=opt;
-    b.onclick=()=>{
-      if(opt===x.a){mEl.textContent="🎉 Great job! Correct!";speak("Great job!");}
-      else{mEl.textContent="💛 Try again!";speak("Try again");}
-    };
-    oEl.appendChild(b);
-  });
-}
-document.getElementById("nextQuiz").onclick=()=>{qi=(qi+1)%quiz.length;loadQuiz()};
-loadQuiz();
+  const quizBank=[
+    {type:"animal",question:"Where is the Cow? 🐮",answer:"Cow",options:[{name:"Dog",emoji:"🐶"},{name:"Cat",emoji:"🐱"},{name:"Cow",emoji:"🐮"},{name:"Lion",emoji:"🦁"}]},
+    {type:"animal",question:"Where is the Cat? 🐱",answer:"Cat",options:[{name:"Horse",emoji:"🐴"},{name:"Cat",emoji:"🐱"},{name:"Elephant",emoji:"🐘"},{name:"Dog",emoji:"🐶"}]},
+    {type:"animal",question:"Where is the Elephant? 🐘",answer:"Elephant",options:[{name:"Monkey",emoji:"🐒"},{name:"Sheep",emoji:"🐑"},{name:"Elephant",emoji:"🐘"},{name:"Cow",emoji:"🐮"}]},
+    {type:"animal",question:"Where is the Lion? 🦁",answer:"Lion",options:[{name:"Lion",emoji:"🦁"},{name:"Tiger",emoji:"🐯"},{name:"Dog",emoji:"🐶"},{name:"Horse",emoji:"🐴"}]},
+    {type:"color",question:"Where is Red? 🔴",answer:"Red",options:[{name:"Red",color:"#ff5b5b"},{name:"Blue",color:"#4d8dff"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
+    {type:"color",question:"Where is Blue? 🔵",answer:"Blue",options:[{name:"Purple",color:"#9b6cff"},{name:"Blue",color:"#4d8dff"},{name:"Orange",color:"#ff8b38"},{name:"Pink",color:"#ef72b6"}]},
+    {type:"color",question:"Where is Green? 🟢",answer:"Green",options:[{name:"Brown",color:"#9a6b45"},{name:"Pink",color:"#ef72b6"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
+    {type:"color",question:"Where is Yellow? 🟡",answer:"Yellow",options:[{name:"Orange",color:"#ff8b38"},{name:"Purple",color:"#9b6cff"},{name:"Yellow",color:"#f6c945"},{name:"Red",color:"#ff5b5b"}]},
+    {type:"number",question:"Where is 7? 🔢",answer:"7",options:[{name:"4"},{name:"7"},{name:"9"},{name:"2"}]},
+    {type:"number",question:"Where is 3? 🔢",answer:"3",options:[{name:"8"},{name:"3"},{name:"5"},{name:"1"}]},
+    {type:"number",question:"Where is 10? 🔢",answer:"10",options:[{name:"6"},{name:"9"},{name:"10"},{name:"12"}]},
+    {type:"number",question:"Where is 5? 🔢",answer:"5",options:[{name:"2"},{name:"8"},{name:"5"},{name:"7"}]},
+    {type:"letter",question:"Where is A? 🔤",answer:"A",options:[{name:"A"},{name:"B"},{name:"C"},{name:"D"}]},
+    {type:"letter",question:"Where is M? 🔤",answer:"M",options:[{name:"N"},{name:"W"},{name:"M"},{name:"H"}]},
+    {type:"letter",question:"Where is S? 🔤",answer:"S",options:[{name:"C"},{name:"S"},{name:"G"},{name:"Z"}]},
+    {type:"letter",question:"Where is T? 🔤",answer:"T",options:[{name:"F"},{name:"L"},{name:"T"},{name:"P"}]}
+  ];
+  let quizIndex=0;
+  const qEl=document.getElementById("quizQuestion"),oEl=document.getElementById("quizOptions"),mEl=document.getElementById("quizMessage");
+  function renderQuizQuestion(){
+    const q=quizBank[quizIndex]; qEl.textContent=q.question; mEl.textContent=""; oEl.innerHTML="";
+    [...q.options].sort(()=>Math.random()-.5).forEach(opt=>{
+      const b=document.createElement("button"); b.className="quiz-option";
+      if(q.type==="animal") b.innerHTML=`<span class="quiz-animal">${opt.emoji}</span>`;
+      else if(q.type==="color") b.innerHTML=`<span class="quiz-color" style="background:${opt.color}"></span>`;
+      else if(q.type==="number") b.innerHTML=`<span class="quiz-number">${opt.name}</span>`;
+      else b.innerHTML=`<span class="quiz-letter">${opt.name}</span>`;
+      b.setAttribute("aria-label",opt.name);
+      b.onclick=()=>{if(opt.name===q.answer){mEl.textContent="🎉 Great job!";speak("Great job!");}else{mEl.textContent="💛 Try again!";speak("Try again!");}};
+      oEl.appendChild(b);
+    });
+  }
+  document.getElementById("nextQuiz").onclick=()=>{quizIndex=(quizIndex+1)%quizBank.length;renderQuizQuestion()};
+  renderQuizQuestion();
 </script>
 </body>
 </html>
