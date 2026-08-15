@@ -90,13 +90,20 @@
     .emoji{font-size:55px}.label{font-size:18px}
     .letter-card{grid-template-columns:repeat(4,1fr)}
   }
+
+  .reward-pop{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%) scale(.7);z-index:1000;background:#fff;border-radius:28px;padding:24px 30px;box-shadow:0 15px 45px #243b5340;text-align:center;font-size:26px;font-weight:900;opacity:0;pointer-events:none}
+  .reward-pop.show{animation:rewardPop .9s ease forwards}
+  @keyframes rewardPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.95)}}
+  .confetti{position:fixed;top:-20px;z-index:999;font-size:24px;pointer-events:none;animation:fall 1.1s ease-in forwards}
+  @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:0}}
 </style>
 </head>
 <body>
+<div id="rewardPop" class="reward-pop"></div>
 <div class="app">
 <header>
   <h1>🌈 Little Learner</h1>
-  <p>Learn, tap, listen & play!</p>
+  <p>Learn, tap, listen & play!</p><div id="starBar" style="margin-top:10px;font-weight:900;color:#6c63ff">⭐ Stars: <span id="starCount">0</span></div>
 </header>
 
 <nav class="tabs" aria-label="Learning sections">
@@ -265,24 +272,16 @@ document.querySelectorAll(".tab").forEach(tab=>{
   };
 });
 
-/* ---------- Quiz ---------- */
+/* ---------- Quiz + Phase 3 Rewards ---------- */
 const quizBank=[
-  {type:"animal",question:"Where is the Cow?",spoken:"Where is the cow?",answer:"Cow",options:[
-    {name:"Dog",emoji:"🐶"},{name:"Cat",emoji:"🐱"},{name:"Cow",emoji:"🐮"},{name:"Lion",emoji:"🦁"}]},
-  {type:"animal",question:"Where is the Cat?",spoken:"Where is the cat?",answer:"Cat",options:[
-    {name:"Horse",emoji:"🐴"},{name:"Cat",emoji:"🐱"},{name:"Elephant",emoji:"🐘"},{name:"Dog",emoji:"🐶"}]},
-  {type:"animal",question:"Where is the Elephant?",spoken:"Where is the elephant?",answer:"Elephant",options:[
-    {name:"Monkey",emoji:"🐒"},{name:"Sheep",emoji:"🐑"},{name:"Elephant",emoji:"🐘"},{name:"Cow",emoji:"🐮"}]},
-  {type:"animal",question:"Where is the Lion?",spoken:"Where is the lion?",answer:"Lion",options:[
-    {name:"Lion",emoji:"🦁"},{name:"Tiger",emoji:"🐯"},{name:"Dog",emoji:"🐶"},{name:"Horse",emoji:"🐴"}]},
-  {type:"color",question:"Where is Red?",spoken:"Where is red?",answer:"Red",options:[
-    {name:"Red",color:"#ff5b5b"},{name:"Blue",color:"#4d8dff"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
-  {type:"color",question:"Where is Blue?",spoken:"Where is blue?",answer:"Blue",options:[
-    {name:"Purple",color:"#9b6cff"},{name:"Blue",color:"#4d8dff"},{name:"Orange",color:"#ff8b38"},{name:"Pink",color:"#ef72b6"}]},
-  {type:"color",question:"Where is Green?",spoken:"Where is green?",answer:"Green",options:[
-    {name:"Brown",color:"#9a6b45"},{name:"Pink",color:"#ef72b6"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
-  {type:"color",question:"Where is Yellow?",spoken:"Where is yellow?",answer:"Yellow",options:[
-    {name:"Orange",color:"#ff8b38"},{name:"Purple",color:"#9b6cff"},{name:"Yellow",color:"#f6c945"},{name:"Red",color:"#ff5b5b"}]},
+  {type:"animal",question:"Where is the Cow?",spoken:"Where is the cow?",answer:"Cow",options:[{name:"Dog",emoji:"🐶"},{name:"Cat",emoji:"🐱"},{name:"Cow",emoji:"🐮"},{name:"Lion",emoji:"🦁"}]},
+  {type:"animal",question:"Where is the Cat?",spoken:"Where is the cat?",answer:"Cat",options:[{name:"Horse",emoji:"🐴"},{name:"Cat",emoji:"🐱"},{name:"Elephant",emoji:"🐘"},{name:"Dog",emoji:"🐶"}]},
+  {type:"animal",question:"Where is the Elephant?",spoken:"Where is the elephant?",answer:"Elephant",options:[{name:"Monkey",emoji:"🐒"},{name:"Sheep",emoji:"🐑"},{name:"Elephant",emoji:"🐘"},{name:"Cow",emoji:"🐮"}]},
+  {type:"animal",question:"Where is the Lion?",spoken:"Where is the lion?",answer:"Lion",options:[{name:"Lion",emoji:"🦁"},{name:"Tiger",emoji:"🐯"},{name:"Dog",emoji:"🐶"},{name:"Horse",emoji:"🐴"}]},
+  {type:"color",question:"Where is Red?",spoken:"Where is red?",answer:"Red",options:[{name:"Red",color:"#ff5b5b"},{name:"Blue",color:"#4d8dff"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
+  {type:"color",question:"Where is Blue?",spoken:"Where is blue?",answer:"Blue",options:[{name:"Purple",color:"#9b6cff"},{name:"Blue",color:"#4d8dff"},{name:"Orange",color:"#ff8b38"},{name:"Pink",color:"#ef72b6"}]},
+  {type:"color",question:"Where is Green?",spoken:"Where is green?",answer:"Green",options:[{name:"Brown",color:"#9a6b45"},{name:"Pink",color:"#ef72b6"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
+  {type:"color",question:"Where is Yellow?",spoken:"Where is yellow?",answer:"Yellow",options:[{name:"Orange",color:"#ff8b38"},{name:"Purple",color:"#9b6cff"},{name:"Yellow",color:"#f6c945"},{name:"Red",color:"#ff5b5b"}]},
   {type:"number",question:"Where is 7?",spoken:"Where is seven?",answer:"7",options:[{name:"4"},{name:"7"},{name:"9"},{name:"2"}]},
   {type:"number",question:"Where is 3?",spoken:"Where is three?",answer:"3",options:[{name:"8"},{name:"3"},{name:"5"},{name:"1"}]},
   {type:"number",question:"Where is 10?",spoken:"Where is ten?",answer:"10",options:[{name:"6"},{name:"9"},{name:"10"},{name:"12"}]},
@@ -294,23 +293,71 @@ const quizBank=[
 ];
 
 let quizIndex=0;
+let stars=Number(localStorage.getItem("littleLearnerStars")||0);
+let lastAnswered=false;
 const qEl=document.getElementById("quizQuestion");
 const oEl=document.getElementById("quizOptions");
 const mEl=document.getElementById("quizMessage");
+const starEl=document.getElementById("starCount");
+const rewardPop=document.getElementById("rewardPop");
+
+function updateStars(){
+  starEl.textContent=stars;
+  localStorage.setItem("littleLearnerStars",String(stars));
+}
+
+function clap(){
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;
+    if(!C)return;
+    const c=new C();
+    if(c.state==="suspended")c.resume();
+    [0,.18].forEach(delay=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type="square";
+      o.frequency.setValueAtTime(900,c.currentTime+delay);
+      o.frequency.exponentialRampToValueAtTime(420,c.currentTime+delay+.08);
+      g.gain.setValueAtTime(.0001,c.currentTime+delay);
+      g.gain.exponentialRampToValueAtTime(.16,c.currentTime+delay+.015);
+      g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+delay+.1);
+      o.connect(g);g.connect(c.destination);
+      o.start(c.currentTime+delay);o.stop(c.currentTime+delay+.12);
+    });
+  }catch(e){}
+}
+
+function confetti(){
+  const pieces=["⭐","🎉","✨","👏"];
+  for(let i=0;i<18;i++){
+    const x=document.createElement("span");
+    x.className="confetti";
+    x.textContent=pieces[Math.floor(Math.random()*pieces.length)];
+    x.style.left=(5+Math.random()*90)+"%";
+    x.style.animationDelay=(Math.random()*.25)+"s";
+    document.body.appendChild(x);
+    setTimeout(()=>x.remove(),1400);
+  }
+}
+
+function showReward(){
+  rewardPop.textContent=stars%10===0 ? "🏆 Amazing! "+stars+" Stars!" : "👏 Great job! ⭐ +1 Star";
+  rewardPop.classList.remove("show");
+  void rewardPop.offsetWidth;
+  rewardPop.classList.add("show");
+  confetti();
+}
 
 function renderQuizQuestion(){
   const q=quizBank[quizIndex];
   qEl.textContent=q.question;
   mEl.textContent="";
   oEl.innerHTML="";
-
-  // Ask the question aloud every time a new question appears.
+  lastAnswered=false;
   speak(q.spoken);
 
   [...q.options].sort(()=>Math.random()-.5).forEach(opt=>{
     const b=document.createElement("button");
     b.className="quiz-option";
-
     if(q.type==="animal"){
       b.innerHTML=`<span style="font-size:72px">${opt.emoji}</span>`;
     }else if(q.type==="color"){
@@ -318,12 +365,18 @@ function renderQuizQuestion(){
     }else{
       b.innerHTML=`<span style="font-size:58px;font-weight:900;color:#6c63ff">${opt.name}</span>`;
     }
-
     b.setAttribute("aria-label",opt.name);
     b.onclick=()=>{
       if(opt.name===q.answer){
-        mEl.textContent="🎉 Great job!";
-        speak("Great job!");
+        if(!lastAnswered){
+          lastAnswered=true;
+          stars++;
+          updateStars();
+          mEl.textContent="🎉 Great job! 👏";
+          speak("Great job!");
+          clap();
+          showReward();
+        }
       }else{
         mEl.textContent="💛 Try again!";
         speak("Try again!");
@@ -338,6 +391,7 @@ document.getElementById("nextQuiz").onclick=()=>{
   renderQuizQuestion();
 };
 
+updateStars();
 renderQuizQuestion();
 </script>
 </body>
