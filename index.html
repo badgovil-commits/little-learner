@@ -2,349 +2,348 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f4f6ff">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6c63ff">
 <title>Little Learner</title>
 <style>
-:root{
-  --ink:#24314f; --muted:#68738d; --purple:#6658f6; --soft:#eef0ff;
-  --green:#24b36b; --red:#ef6262; --card:#ffffff; --bg:#f4f6ff;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{
-  margin:0; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;
-  background:linear-gradient(180deg,#f5f7ff 0%,#eef2ff 100%); color:var(--ink);
-}
-.app{max-width:900px;margin:auto;padding:28px 18px 70px}
-.header{text-align:center;padding:18px 0 28px}
-.logo{font-size:58px;line-height:1;margin-bottom:4px}
-h1{font-size:48px;margin:0;font-weight:800;letter-spacing:-1.5px}
-.tag{font-size:24px;color:var(--muted);margin-top:12px}
-.tabs{
-  display:grid;grid-template-columns:repeat(5,1fr);gap:9px;background:#fff;padding:10px;
-  border-radius:28px;box-shadow:0 12px 30px rgba(48,62,110,.12);position:sticky;top:8px;z-index:5
-}
-.tab{
-  border:0;background:#f0f2fb;color:#5d6882;border-radius:20px;padding:15px 7px;
-  font-size:16px;font-weight:800;min-height:72px;cursor:pointer
-}
-.tab.active{background:var(--purple);color:white;box-shadow:0 9px 20px rgba(102,88,246,.28)}
-.panel{
-  margin-top:38px;background:rgba(255,255,255,.96);border-radius:34px;padding:34px 24px 40px;
-  box-shadow:0 18px 50px rgba(44,58,104,.10);text-align:center
-}
-.panel h2{font-size:38px;margin:0 0 10px}
-.prompt{font-size:42px;font-weight:850;letter-spacing:-1px;margin:24px 0 22px}
-.sub{color:var(--muted);font-size:20px;margin-bottom:24px}
-.sound{
-  border:0;background:#eceeff;color:#554bd0;border-radius:22px;padding:15px 22px;
-  font-size:19px;font-weight:800;cursor:pointer;margin-bottom:24px
-}
-.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:760px;margin:0 auto}
-.choice{
-  border:0;background:#f0f1ff;border-radius:28px;padding:12px;min-height:190px;
-  cursor:pointer;box-shadow:0 4px 0 rgba(70,75,150,.05);transition:.18s;
-}
-.choice:active{transform:scale(.96)}
-.choice img{width:100%;height:145px;object-fit:cover;border-radius:20px;display:block;background:#e8eaf4}
-.choice .label{font-size:24px;font-weight:850;margin:10px 4px 4px}
-.choice.correct{background:#dff8eb;outline:4px solid var(--green);animation:pop .35s}
-.choice.wrong{background:#ffe3e3;outline:4px solid var(--red);animation:shake .35s}
-@keyframes pop{50%{transform:scale(1.05)}}
-@keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
-.feedback{min-height:36px;font-size:23px;font-weight:800;margin-top:20px}
-.next{
-  margin-top:18px;border:0;background:var(--purple);color:white;border-radius:20px;
-  padding:15px 28px;font-size:20px;font-weight:850;cursor:pointer
-}
-.color-grid .choice{min-height:160px;display:flex;align-items:center;justify-content:center}
-.color-dot{width:125px;height:125px;border-radius:50%;margin:auto;box-shadow:inset 0 0 0 3px rgba(0,0,0,.05)}
-.number-card,.letter-card{
-  min-height:160px;display:flex;align-items:center;justify-content:center;flex-direction:column;
-  font-size:70px;font-weight:900;color:var(--purple)
-}
-.letter-card img{width:85px;height:85px;object-fit:cover;border-radius:18px;margin-bottom:7px}
-.letter-card .big{font-size:50px}
-.credits{font-size:12px;color:#8992a8;margin-top:34px;line-height:1.5}
-@media(max-width:600px){
-  .app{padding:14px 10px 45px}.header{padding-top:18px}
-  h1{font-size:38px}.logo{font-size:44px}.tag{font-size:19px}
-  .tabs{gap:6px;padding:8px;border-radius:24px}.tab{font-size:13px;min-height:64px;padding:8px 3px;border-radius:17px}
-  .panel{margin-top:28px;border-radius:28px;padding:28px 14px 32px}
-  .panel h2{font-size:31px}.prompt{font-size:34px}.grid4{gap:12px}
-  .choice{min-height:160px;border-radius:22px}.choice img{height:115px;border-radius:16px}.choice .label{font-size:20px}
-  .sound{font-size:16px}.sub{font-size:17px}
-}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:linear-gradient(180deg,#f7f9ff 0%,#eef4ff 100%);
+    color:#25304a;min-height:100vh;
+  }
+  .app{max-width:760px;margin:auto;padding:18px 14px 30px}
+  header{text-align:center;padding:8px 8px 14px}
+  header h1{margin:0;font-size:34px;font-weight:800}
+  header p{margin:5px 0 0;color:#69738a;font-size:15px}
+  .tabs{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:7px;
+    background:#fff;padding:7px;border-radius:18px;box-shadow:0 7px 24px #243b5320;
+    position:sticky;top:8px;z-index:10;
+  }
+  .tab{
+    border:0;background:#f1f3fa;color:#5d6780;border-radius:13px;
+    padding:11px 5px;font-weight:800;font-size:12px;cursor:pointer;
+  }
+  .tab.active{background:#6c63ff;color:#fff;box-shadow:0 5px 12px #6c63ff45}
+  .screen{display:none;margin-top:18px;animation:fadeUp .35s ease}
+  .screen.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .hero{
+    background:#fff;border-radius:28px;padding:22px;box-shadow:0 10px 30px #243b5320;
+    text-align:center;
+  }
+  .hero h2{margin:0 0 6px;font-size:25px}
+  .hero p{margin:0 0 18px;color:#727b90}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+  .card{
+    border:0;background:#fff;border-radius:24px;padding:18px 12px;
+    box-shadow:0 8px 22px #243b5318;cursor:pointer;min-height:150px;
+    transition:transform .15s ease,box-shadow .15s ease;
+  }
+  .card:active{transform:scale(.96)}
+  .emoji{font-size:64px;line-height:1.1;display:block;animation:float 2.8s ease-in-out infinite}
+  .card:nth-child(2n) .emoji{animation-delay:.25s}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(2deg)}}
+  .label{font-size:21px;font-weight:800;margin-top:8px}
+  .sub{font-size:13px;color:#7b8497;margin-top:3px}
+  .big{
+    font-size:100px;font-weight:900;line-height:1;margin:8px 0 14px;
+    color:#6c63ff;animation:bounce .8s ease;
+  }
+  @keyframes bounce{0%{transform:scale(.7);opacity:.2}65%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  .action{
+    border:0;border-radius:16px;background:#6c63ff;color:white;padding:13px 20px;
+    font-size:16px;font-weight:800;cursor:pointer;margin:5px;
+  }
+  .action.secondary{background:#eef0ff;color:#5b53d6}
+  .letter-card{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px
+  }
+  .letter{
+    border:0;background:#fff;border-radius:20px;padding:15px 5px;box-shadow:0 6px 16px #243b5315;
+    font-size:30px;font-weight:900;color:#ff6b6b;cursor:pointer;
+  }
+  .letter small{display:block;font-size:11px;color:#788197;font-weight:700;margin-top:5px}
+  .color-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+  .color-card{
+    min-height:120px;border:0;border-radius:24px;color:#fff;font-size:23px;font-weight:900;
+    box-shadow:0 8px 20px #243b5325;cursor:pointer;text-shadow:0 2px 5px #0004
+  }
+  .number-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .number{
+    border:0;background:#fff;border-radius:22px;padding:20px 5px;box-shadow:0 7px 18px #243b5318;
+    cursor:pointer;font-size:34px;font-weight:900;color:#6c63ff;
+  }
+  .quiz-box{background:#fff;border-radius:26px;padding:22px;box-shadow:0 10px 28px #243b5320;text-align:center}
+  .quiz-question{font-size:28px;font-weight:900;margin:10px 0 20px}
+  .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .quiz-option{
+    border:0;background:#eef0ff;border-radius:18px;padding:16px;font-size:20px;font-weight:800;
+    color:#4f48bb;cursor:pointer
+  }
+  .message{min-height:30px;font-weight:800;margin-top:15px}
+  .sound-note{font-size:12px;color:#858da0;margin-top:12px}
+  @media(max-width:430px){
+    .tabs{gap:4px}.tab{font-size:10px;padding:10px 2px}
+    .cards{gap:10px}.card{min-height:135px;padding:14px 8px}
+    .emoji{font-size:55px}.label{font-size:18px}
+    .letter-card{grid-template-columns:repeat(4,1fr)}
+  }
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="header">
-    <div class="logo">🌈</div>
-    <h1>Little Learner</h1>
-    <div class="tag">Learn, tap, listen &amp; play!</div>
-  </header>
+<header>
+  <h1>🌈 Little Learner</h1>
+  <p>Learn, tap, listen & play!</p>
+</header>
 
-  <nav class="tabs">
-    <button class="tab active" data-tab="animals">🐾 Animals</button>
-    <button class="tab" data-tab="colours">🎨 Colours</button>
-    <button class="tab" data-tab="numbers">🔢 Numbers</button>
-    <button class="tab" data-tab="abcd">🔤 ABCD</button>
-    <button class="tab" data-tab="quiz">🧠 Quiz</button>
-  </nav>
+<nav class="tabs" aria-label="Learning sections">
+  <button class="tab active" data-tab="animals">🐾 Animals</button>
+  <button class="tab" data-tab="colors">🎨 Colours</button>
+  <button class="tab" data-tab="numbers">🔢 Numbers</button>
+  <button class="tab" data-tab="abc">🔤 ABCD</button>
+  <button class="tab" data-tab="quiz">🧠 Quiz</button>
+</nav>
 
-  <main id="panel" class="panel"></main>
+<section id="animals" class="screen active">
+  <div class="hero">
+    <h2>🐾 Animal Sounds</h2>
+    <p>Tap an animal to see it move and hear its sound.</p>
+    <div class="cards" id="animalCards"></div>
+    <div class="sound-note">🔊 REAL animal recordings • Turn up your iPhone volume for the best sound.</div>
+  </div>
+</section>
+
+<section id="colors" class="screen">
+  <div class="hero">
+    <h2>🎨 Colours</h2>
+    <p>Tap a colour and learn its name.</p>
+    <div class="color-grid" id="colorGrid"></div>
+  </div>
+</section>
+
+<section id="numbers" class="screen">
+  <div class="hero">
+    <h2>🔢 Numbers</h2>
+    <p>Tap a number to hear it.</p>
+    <div class="number-grid" id="numberGrid"></div>
+  </div>
+</section>
+
+<section id="abc" class="screen">
+  <div class="hero">
+    <h2>🔤 ABCD</h2>
+    <p>Learn letters with simple words.</p>
+    <div class="big" id="letterBig">A</div>
+    <div class="letter-card" id="letterGrid"></div>
+  </div>
+</section>
+
+<section id="quiz" class="screen">
+  <div class="quiz-box">
+    <h2>🧠 Little Quiz</h2>
+    <div class="quiz-question" id="quizQuestion">Loading...</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="message" id="quizMessage"></div>
+    <button class="action" id="nextQuiz">Next Question ➜</button>
+  </div>
+</section>
 </div>
 
 <script>
-const IMG = {
-  dog: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Dog_portrait.jpg',
-  cat: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Katze_Portrait.jpg',
-  lion:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Lion_portrait.jpg',
-  cow: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/A_Cow.jpg',
-  apple:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Red_apple.jpg',
-  ball:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Basketball.png',
-  cat2:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Katze_Portrait.jpg',
-  dog2:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Dog_Portrait_1.jpg'
-};
-
-const SOUND = {
-  dog:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Barking_dog_in_Rome.ogg',
-  cat:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Meow.ogg',
-  cow:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Single_Cow_Moo.ogg',
-  lion:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Lion_raring-sound1TamilNadu178.ogg'
-};
-
-const animals = [
-  {id:'dog',name:'Dog',img:IMG.dog},
-  {id:'cat',name:'Cat',img:IMG.cat},
-  {id:'lion',name:'Lion',img:IMG.lion},
-  {id:'cow',name:'Cow',img:IMG.cow}
-];
-
-const colours = [
-  {id:'red',name:'Red',value:'#ef4d4d'},
-  {id:'blue',name:'Blue',value:'#4385f5'},
-  {id:'yellow',name:'Yellow',value:'#ffd447'},
-  {id:'green',name:'Green',value:'#35c978'}
-];
-
-const numbers = ['1','2','3','4','5','6','7','8'];
-const letters = [
-  {id:'A',name:'A for Apple',img:IMG.apple},
-  {id:'B',name:'B for Ball',img:IMG.ball},
-  {id:'C',name:'C for Cat',img:IMG.cat2},
-  {id:'D',name:'D for Dog',img:IMG.dog2}
-];
-
-let currentTab='animals';
-let currentTarget=null;
-let locked=false;
-
+/* ---------- Speech ---------- */
 function speak(text){
-  if(!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.rate=.88; u.pitch=1.12; u.volume=1;
-  speechSynthesis.speak(u);
-}
-function playSound(id){
-  const a=new Audio(SOUND[id]);
-  a.volume=1;
-  a.play().catch(()=>{});
-}
-function shuffle(a){ return [...a].sort(()=>Math.random()-.5); }
-
-function setTab(tab){
-  currentTab=tab;
-  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-  render();
+  try{
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=.82; u.pitch=1.15;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
 }
 
-function render(){
-  if(currentTab==='animals') renderAnimals();
-  else if(currentTab==='quiz') renderQuiz();
-  else if(currentTab==='colours') renderColours();
-  else if(currentTab==='numbers') renderNumbers();
-  else renderLetters();
-}
-
-/* ---------- ANIMALS LEARNING TAB ----------
-   This is intentionally NOT a quiz. Each card shows the animal,
-   its real photograph and its real recorded sound.
+/* ---------- REAL ANIMAL SOUNDS ----------
+   Actual animal recordings — no generated tones and no
+   speech synthesis are used for the Animal tab.
 */
-function renderAnimals(){
-  panel.innerHTML=`
-    <h2>🐾 Learn Animals</h2>
-    <div class="sub">Tap an animal to see it and hear its real sound.</div>
-    <div class="grid4">
-      ${animals.map(x=>`
-        <button class="choice" data-id="${x.id}" aria-label="${x.name}">
-          <img src="${x.img}" alt="${x.name}" loading="eager">
-          <div class="label">${x.name}</div>
-        </button>`).join('')}
-    </div>
-    <div id="animalMessage" class="feedback"></div>
-    <div class="credits">Animal photographs and real animal recordings are loaded from Wikimedia Commons.</div>`;
+const animalAudio={
+  "Cat":"https://upload.wikimedia.org/wikipedia/commons/6/62/Meow.ogg",
+  "Dog":"https://upload.wikimedia.org/wikipedia/commons/a/a2/Barking_of_a_dog.ogg",
+  "Cow":"https://upload.wikimedia.org/wikipedia/commons/a/a5/Single_Cow_Moo.ogg",
+  "Lion":"https://upload.wikimedia.org/wikipedia/commons/7/7d/Lion_raring-sound1TamilNadu178.ogg",
+  "Monkey":"https://upload.wikimedia.org/wikipedia/commons/b/b8/Howler_monkey.ogg",
+  "Sheep":"https://upload.wikimedia.org/wikipedia/commons/2/28/Sheep_bleat.ogg",
+  "Horse":"https://upload.wikimedia.org/wikipedia/commons/d/db/Wiehern.ogg",
+  "Elephant":"https://upload.wikimedia.org/wikipedia/commons/4/40/Elephant_voice_-_trumpeting.ogg"
+};
 
-  document.querySelectorAll('#panel .choice').forEach(btn=>{
-    btn.onclick=()=>{
-      const animal=animals.find(x=>x.id===btn.dataset.id);
-      document.querySelectorAll('#panel .choice').forEach(x=>x.classList.remove('correct'));
-      btn.classList.add('correct');
-      document.getElementById('animalMessage').textContent=`🔊 ${animal.name} sound`;
-      playSound(animal.id);
-      speak(animal.name);
+let currentAnimalAudio=null;
+
+function playRealAnimalSound(name){
+  try{
+    if(currentAnimalAudio){
+      currentAnimalAudio.pause();
+      currentAnimalAudio.currentTime=0;
+    }
+
+    const audio=new Audio(animalAudio[name]);
+    audio.preload="auto";
+    audio.volume=1.0;
+    currentAnimalAudio=audio;
+    audio.play().catch(()=>{});
+  }catch(e){}
+}
+
+/* ---------- Animals ---------- */
+const animals=[
+  ["🐱","Cat"],["🐶","Dog"],["🐮","Cow"],["🦁","Lion"],
+  ["🐒","Monkey"],["🐑","Sheep"],["🐴","Horse"],["🐘","Elephant"]
+];
+const animalCards=document.getElementById("animalCards");
+animals.forEach(([emoji,name])=>{
+  const b=document.createElement("button");b.className="card";
+  b.innerHTML=`<span class="emoji">${emoji}</span><div class="label">${name}</div><div class="sub">Tap for REAL sound 🔊</div>`;
+  b.onclick=()=>{
+    b.animate(
+      [{transform:"scale(1)"},{transform:"scale(1.07) rotate(-2deg)"},{transform:"scale(1)"}],
+      {duration:450}
+    );
+    playRealAnimalSound(name);
+  };
+  animalCards.appendChild(b);
+});
+
+/* ---------- Colours ---------- */
+const colors=[
+  ["Red","#ff5b5b"],["Blue","#4d8dff"],["Yellow","#f6c945"],["Green","#43bd72"],
+  ["Orange","#ff8b38"],["Purple","#9b6cff"],["Pink","#ef72b6"],["Brown","#9a6b45"]
+];
+const colorGrid=document.getElementById("colorGrid");
+colors.forEach(([name,bg])=>{
+  const b=document.createElement("button");b.className="color-card";b.style.background=bg;b.textContent=name;
+  b.onclick=()=>{speak(name);b.animate([{transform:"scale(1)"},{transform:"scale(1.08)"},{transform:"scale(1)"}],{duration:350});};
+  colorGrid.appendChild(b);
+});
+
+/* ---------- Numbers ---------- */
+const numberGrid=document.getElementById("numberGrid");
+for(let n=1;n<=12;n++){
+  const b=document.createElement("button");b.className="number";b.textContent=n;
+  b.onclick=()=>speak(["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"][n]);
+  numberGrid.appendChild(b);
+}
+
+/* ---------- ABCD ---------- */
+const words={
+A:["Apple","🍎"],B:["Ball","⚽"],C:["Cat","🐱"],D:["Dog","🐶"],E:["Elephant","🐘"],F:["Fish","🐟"],
+G:["Grapes","🍇"],H:["Hat","🎩"],I:["Ice cream","🍦"],J:["Juice","🧃"],K:["Kite","🪁"],L:["Lion","🦁"],
+M:["Mango","🥭"],N:["Nest","🪺"],O:["Orange","🍊"],P:["Parrot","🦜"],Q:["Queen","👑"],R:["Rabbit","🐰"],
+S:["Sun","☀️"],T:["Tiger","🐯"],U:["Umbrella","☂️"],V:["Van","🚐"],W:["Whale","🐋"],X:["Xylophone","🎵"],
+Y:["Yo-yo","🪀"],Z:["Zebra","🦓"]
+};
+const letterGrid=document.getElementById("letterGrid"),letterBig=document.getElementById("letterBig");
+Object.entries(words).forEach(([letter,[word,emoji]])=>{
+  const b=document.createElement("button");b.className="letter";
+  b.innerHTML=`${letter}<small>${emoji} ${word}</small>`;
+  b.onclick=()=>{
+    letterBig.textContent=letter;
+    letterBig.animate([{transform:"scale(.7)"},{transform:"scale(1.15)"},{transform:"scale(1)"}],{duration:450});
+    speak(`${letter} for ${word}`);
+  };
+  letterGrid.appendChild(b);
+});
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(tab.dataset.tab).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  };
+});
+
+/* ---------- Quiz ---------- */
+const quizBank = [
+  // Animals
+  {type:"animal", question:"Where is the Dog? 🐶", visual:"🐶", answer:"Dog", options:["Dog","Cat","Cow","Lion"]},
+  {type:"animal", question:"Where is the Cat? 🐱", visual:"🐱", answer:"Cat", options:["Cat","Dog","Elephant","Horse"]},
+  {type:"animal", question:"Where is the Cow? 🐮", visual:"🐮", answer:"Cow", options:["Cow","Lion","Sheep","Monkey"]},
+  {type:"animal", question:"Where is the Elephant? 🐘", visual:"🐘", answer:"Elephant", options:["Elephant","Cat","Horse","Dog"]},
+
+  // Colours
+  {type:"color", question:"Where is Red? 🔴", visual:"#ff5b5b", answer:"Red", options:["Red","Blue","Green","Yellow"]},
+  {type:"color", question:"Where is Blue? 🔵", visual:"#4d8dff", answer:"Blue", options:["Green","Blue","Purple","Orange"]},
+  {type:"color", question:"Where is Green? 🟢", visual:"#43bd72", answer:"Green", options:["Pink","Brown","Green","Yellow"]},
+  {type:"color", question:"Where is Yellow? 🟡", visual:"#f6c945", answer:"Yellow", options:["Purple","Red","Yellow","Orange"]},
+
+  // Numbers
+  {type:"number", question:"Where is 7? 🔢", visual:"7", answer:"7", options:["7","4","9","2"]},
+  {type:"number", question:"Where is 3? 🔢", visual:"3", answer:"3", options:["8","3","5","1"]},
+  {type:"number", question:"Where is 10? 🔢", visual:"10", answer:"10", options:["6","9","10","12"]},
+  {type:"number", question:"Where is 5? 🔢", visual:"5", answer:"5", options:["2","8","5","7"]},
+
+  // Letters
+  {type:"letter", question:"Where is A? 🔤", visual:"A", answer:"A", options:["A","B","C","D"]},
+  {type:"letter", question:"Where is M? 🔤", visual:"M", answer:"M", options:["N","W","M","H"]},
+  {type:"letter", question:"Where is S? 🔤", visual:"S", answer:"S", options:["C","S","G","Z"]},
+  {type:"letter", question:"Where is T? 🔤", visual:"T", answer:"T", options:["F","L","T","P"]}
+];
+
+let quizIndex=0;
+const qEl=document.getElementById("quizQuestion");
+const oEl=document.getElementById("quizOptions");
+const mEl=document.getElementById("quizMessage");
+
+function renderQuizQuestion(){
+  const q=quizBank[quizIndex];
+  qEl.innerHTML="";
+
+  const prompt=document.createElement("div");
+  prompt.textContent=q.question;
+  prompt.style.marginBottom="14px";
+  qEl.appendChild(prompt);
+
+  // Show the target visually above the choices.
+  const visual=document.createElement("div");
+  visual.style.cssText="font-size:100px;line-height:1.1;margin:8px 0 22px;font-weight:900;";
+
+  if(q.type==="color"){
+    visual.style.cssText="width:150px;height:150px;border-radius:28px;margin:10px auto 24px;box-shadow:0 8px 20px #243b5325;";
+    visual.style.background=q.visual;
+  }else{
+    visual.textContent=q.visual;
+  }
+  qEl.appendChild(visual);
+
+  mEl.textContent="";
+  oEl.innerHTML="";
+
+  [...q.options].sort(()=>Math.random()-.5).forEach(opt=>{
+    const b=document.createElement("button");
+    b.className="quiz-option";
+    b.textContent=opt;
+    b.onclick=()=>{
+      if(opt===q.answer){
+        mEl.textContent="🎉 Great job!";
+        speak("Great job!");
+      }else{
+        mEl.textContent="💛 Try again!";
+        speak("Try again!");
+      }
     };
+    oEl.appendChild(b);
   });
 }
 
-/* ---------- QUIZ TAB ----------
-   Quiz is kept separate from the Animals learning tab.
-*/
-function renderQuiz(){
-  locked=false;
-  const q=shuffle(quizBank)[0];
-  currentTarget=q;
-  panel.innerHTML=`
-    <h2>🧠 Little Quiz</h2>
-    <div class="prompt">${q.question}</div>
-    ${q.type==='animal' ? `<button class="sound" id="quizSound">🔊 Hear the real ${q.answer.toLowerCase()} sound</button>` : ''}
-    <div class="grid4 ${q.type==='color'?'color-grid':''}">
-      ${q.options.map(opt=>{
-        if(q.type==='color'){
-          const c=colours.find(x=>x.name===opt);
-          return `<button class="choice" data-id="${opt}"><div class="color-dot" style="background:${c.value}"></div><div class="label">${opt}</div></button>`;
-        }
-        if(q.type==='animal'){
-          const a=animals.find(x=>x.name===opt);
-          return `<button class="choice" data-id="${opt}"><img src="${a.img}" alt="${opt}" loading="eager"><div class="label">${opt}</div></button>`;
-        }
-        if(q.type==='letter'){
-          const l=letters.find(x=>x.id===opt);
-          return `<button class="choice letter-card" data-id="${opt}"><img src="${l.img}" alt="${l.name}"><div class="big">${opt}</div></button>`;
-        }
-        return `<button class="choice number-card" data-id="${opt}">${opt}</button>`;
-      }).join('')}
-    </div>
-    <div id="feedback" class="feedback"></div>
-    <button id="next" class="next">Next Question ➜</button>`;
-  document.getElementById('next').onclick=render;
-  if(q.type==='animal') document.getElementById('quizSound').onclick=()=>playSound(q.answer.toLowerCase());
-  document.querySelectorAll('#panel .choice').forEach(btn=>btn.onclick=()=>answer(btn,q.answer));
-}
+document.getElementById("nextQuiz").onclick=()=>{
+  quizIndex=(quizIndex+1)%quizBank.length;
+  renderQuizQuestion();
+};
 
-const quizBank = [
-  {type:'animal',question:'Where is the Cow? 🐮',answer:'Cow',options:['Cow','Cat','Dog','Lion']},
-  {type:'animal',question:'Where is the Cat? 🐱',answer:'Cat',options:['Cat','Dog','Cow','Lion']},
-  {type:'animal',question:'Where is the Dog? 🐶',answer:'Dog',options:['Dog','Cat','Cow','Lion']},
-  {type:'animal',question:'Where is the Lion? 🦁',answer:'Lion',options:['Lion','Cat','Cow','Dog']},
-  {type:'color',question:'Where is Red? 🔴',answer:'Red',options:['Red','Blue','Green','Yellow']},
-  {type:'color',question:'Where is Blue? 🔵',answer:'Blue',options:['Red','Blue','Green','Yellow']},
-  {type:'color',question:'Where is Green? 🟢',answer:'Green',options:['Red','Blue','Green','Yellow']},
-  {type:'color',question:'Where is Yellow? 🟡',answer:'Yellow',options:['Red','Blue','Green','Yellow']},
-  {type:'number',question:'Where is 7? 🔢',answer:'7',options:['7','4','9','2']},
-  {type:'number',question:'Where is 3? 🔢',answer:'3',options:['8','3','5','1']},
-  {type:'number',question:'Where is 5? 🔢',answer:'5',options:['2','8','5','7']},
-  {type:'number',question:'Where is 2? 🔢',answer:'2',options:['2','6','4','8']},
-  {type:'letter',question:'Where is A? 🔤',answer:'A',options:['A','B','C','D']},
-  {type:'letter',question:'Where is B? 🔤',answer:'B',options:['A','B','C','D']},
-  {type:'letter',question:'Where is C? 🔤',answer:'C',options:['A','B','C','D']},
-  {type:'letter',question:'Where is D? 🔤',answer:'D',options:['A','B','C','D']}
-];
-
-function answer(btn,targetId){
-  if(locked)return;
-  if(btn.dataset.id===targetId){
-    locked=true;
-    btn.classList.add('correct');
-    document.getElementById('feedback').textContent='🎉 Great job!';
-    speak('Great job!');
-    document.querySelectorAll('#panel .choice').forEach(x=>x.disabled=true);
-    const next=document.getElementById('next'); if(next) next.style.display='inline-block';
-  }else{
-    btn.classList.add('wrong');
-    document.getElementById('feedback').textContent='Try again! 👆';
-    speak('Try again');
-    setTimeout(()=>btn.classList.remove('wrong'),450);
-  }
-}
-
-function renderColours(){
-  locked=false;
-  currentTarget=shuffle(colours)[0];
-  const opts=shuffle(colours);
-  panel.innerHTML=`
-    <h2>🎨 Colours</h2>
-    <div class="prompt">Where is ${currentTarget.name}?</div>
-    <div class="sub">Tap the colour you hear and see!</div>
-    <div class="grid4 color-grid">
-      ${opts.map(x=>`
-        <button class="choice" data-id="${x.id}">
-          <div class="color-dot" style="background:${x.value}"></div>
-          <div class="label">${x.name}</div>
-        </button>`).join('')}
-    </div>
-    <div id="feedback" class="feedback"></div>
-    <button id="next" class="next" style="display:none">Next Question ➜</button>`;
-  speak('Where is '+currentTarget.name+'?');
-  document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerGeneric(btn,currentTarget.id));
-  document.getElementById('next').onclick=render;
-}
-function renderNumbers(){
-  locked=false;
-  currentTarget=shuffle(numbers).slice(0,1)[0];
-  const opts=shuffle(numbers).slice(0,4);
-  if(!opts.includes(currentTarget)) opts[0]=currentTarget;
-  const final=shuffle(opts);
-  panel.innerHTML=`
-    <h2>🔢 Numbers</h2>
-    <div class="prompt">Where is ${currentTarget}?</div>
-    <div class="sub">Tap the correct number!</div>
-    <div class="grid4">
-      ${final.map(x=>`<button class="choice number-card" data-id="${x}">${x}</button>`).join('')}
-    </div>
-    <div id="feedback" class="feedback"></div>
-    <button id="next" class="next" style="display:none">Next Question ➜</button>`;
-  speak('Where is '+currentTarget+'?');
-  document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerGeneric(btn,currentTarget));
-  document.getElementById('next').onclick=render;
-}
-function renderLetters(){
-  locked=false;
-  currentTarget=shuffle(letters)[0];
-  const opts=shuffle(letters);
-  panel.innerHTML=`
-    <h2>🔤 ABCD</h2>
-    <div class="prompt">Where is ${currentTarget.id}?</div>
-    <div class="sub">Find the letter and its picture!</div>
-    <div class="grid4">
-      ${opts.map(x=>`
-        <button class="choice letter-card" data-id="${x.id}">
-          <img src="${x.img}" alt="${x.name}">
-          <div class="big">${x.id}</div>
-        </button>`).join('')}
-    </div>
-    <div id="feedback" class="feedback"></div>
-    <button id="next" class="next" style="display:none">Next Question ➜</button>`;
-  speak('Where is '+currentTarget.id+'?');
-  document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerGeneric(btn,currentTarget.id));
-  document.getElementById('next').onclick=render;
-}
-function answerGeneric(btn,targetId){ answer(btn,targetId); }
-
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-
-// Prevent an older PWA/service-worker cache from keeping the previous screen.
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister())).catch(()=>{});
-  if(window.caches) caches.keys().then(keys=>keys.forEach(k=>caches.delete(k))).catch(()=>{});
-}
-
-render();
+renderQuizQuestion();
 </script>
 </body>
 </html>
