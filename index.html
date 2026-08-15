@@ -63,6 +63,7 @@
   .letter{
     border:0;background:#fff;border-radius:20px;padding:15px 5px;box-shadow:0 6px 16px #243b5315;
     font-size:30px;font-weight:900;color:#ff6b6b;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
   }
   .letter small{display:block;font-size:11px;color:#788197;font-weight:700;margin-top:5px}
   .color-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
@@ -275,7 +276,13 @@ Object.entries(words).forEach(([letter,[word,emoji]])=>{
   const b=document.createElement("button");
   b.className="letter";
   b.innerHTML=`${letter}<small>${emoji} ${word}</small>`;
-  b.onclick=()=>showLetter(letter);
+  b.type="button";
+  b.onclick=()=>{
+    // Keep the child's current position while selecting letters lower down.
+    const currentScroll=window.scrollY;
+    showLetter(letter);
+    requestAnimationFrame(()=>window.scrollTo({top:currentScroll,left:0,behavior:"auto"}));
+  };
   letterGrid.appendChild(b);
 });
 
