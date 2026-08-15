@@ -267,118 +267,29 @@ document.querySelectorAll(".tab").forEach(tab=>{
 
 /* ---------- Quiz ---------- */
 const quizBank = [
-  {
-    type:"animal",
-    question:"Which animal is this?",
-    visual:"🐶",
-    answer:"Dog",
-    options:["Dog","Cat","Cow","Lion"]
-  },
-  {
-    type:"animal",
-    question:"Which animal is this?",
-    visual:"🐱",
-    answer:"Cat",
-    options:["Cat","Dog","Elephant","Horse"]
-  },
-  {
-    type:"animal",
-    question:"Which animal is this?",
-    visual:"🐘",
-    answer:"Elephant",
-    options:["Elephant","Lion","Cow","Sheep"]
-  },
-  {
-    type:"animal",
-    question:"Which animal is this?",
-    visual:"🦁",
-    answer:"Lion",
-    options:["Lion","Tiger","Dog","Monkey"]
-  },
-  {
-    type:"color",
-    question:"Which colour is this?",
-    visual:"#ff5b5b",
-    answer:"Red",
-    options:["Red","Blue","Green","Yellow"]
-  },
-  {
-    type:"color",
-    question:"Which colour is this?",
-    visual:"#4d8dff",
-    answer:"Blue",
-    options:["Blue","Purple","Green","Orange"]
-  },
-  {
-    type:"color",
-    question:"Which colour is this?",
-    visual:"#43bd72",
-    answer:"Green",
-    options:["Green","Pink","Brown","Yellow"]
-  },
-  {
-    type:"color",
-    question:"Which colour is this?",
-    visual:"#f6c945",
-    answer:"Yellow",
-    options:["Yellow","Red","Orange","Purple"]
-  },
-  {
-    type:"number",
-    question:"Which number is this?",
-    visual:"7",
-    answer:"7",
-    options:["7","4","9","2"]
-  },
-  {
-    type:"number",
-    question:"Which number is this?",
-    visual:"3",
-    answer:"3",
-    options:["8","3","5","1"]
-  },
-  {
-    type:"number",
-    question:"Which number is this?",
-    visual:"10",
-    answer:"10",
-    options:["6","9","10","12"]
-  },
-  {
-    type:"number",
-    question:"Which number is this?",
-    visual:"5",
-    answer:"5",
-    options:["2","8","5","7"]
-  },
-  {
-    type:"letter",
-    question:"Which letter is this?",
-    visual:"A",
-    answer:"A",
-    options:["A","B","C","D"]
-  },
-  {
-    type:"letter",
-    question:"Which letter is this?",
-    visual:"M",
-    answer:"M",
-    options:["N","W","M","H"]
-  },
-  {
-    type:"letter",
-    question:"Which letter is this?",
-    visual:"S",
-    answer:"S",
-    options:["C","S","G","Z"]
-  },
-  {
-    type:"letter",
-    question:"Which letter is this?",
-    visual:"T",
-    answer:"T",
-    options:["F","L","T","P"]
-  }
+  // Animals
+  {type:"animal", question:"Where is the Dog? 🐶", visual:"🐶", answer:"Dog", options:["Dog","Cat","Cow","Lion"]},
+  {type:"animal", question:"Where is the Cat? 🐱", visual:"🐱", answer:"Cat", options:["Cat","Dog","Elephant","Horse"]},
+  {type:"animal", question:"Where is the Cow? 🐮", visual:"🐮", answer:"Cow", options:["Cow","Lion","Sheep","Monkey"]},
+  {type:"animal", question:"Where is the Elephant? 🐘", visual:"🐘", answer:"Elephant", options:["Elephant","Cat","Horse","Dog"]},
+
+  // Colours
+  {type:"color", question:"Where is Red? 🔴", visual:"#ff5b5b", answer:"Red", options:["Red","Blue","Green","Yellow"]},
+  {type:"color", question:"Where is Blue? 🔵", visual:"#4d8dff", answer:"Blue", options:["Green","Blue","Purple","Orange"]},
+  {type:"color", question:"Where is Green? 🟢", visual:"#43bd72", answer:"Green", options:["Pink","Brown","Green","Yellow"]},
+  {type:"color", question:"Where is Yellow? 🟡", visual:"#f6c945", answer:"Yellow", options:["Purple","Red","Yellow","Orange"]},
+
+  // Numbers
+  {type:"number", question:"Where is 7? 🔢", visual:"7", answer:"7", options:["7","4","9","2"]},
+  {type:"number", question:"Where is 3? 🔢", visual:"3", answer:"3", options:["8","3","5","1"]},
+  {type:"number", question:"Where is 10? 🔢", visual:"10", answer:"10", options:["6","9","10","12"]},
+  {type:"number", question:"Where is 5? 🔢", visual:"5", answer:"5", options:["2","8","5","7"]},
+
+  // Letters
+  {type:"letter", question:"Where is A? 🔤", visual:"A", answer:"A", options:["A","B","C","D"]},
+  {type:"letter", question:"Where is M? 🔤", visual:"M", answer:"M", options:["N","W","M","H"]},
+  {type:"letter", question:"Where is S? 🔤", visual:"S", answer:"S", options:["C","S","G","Z"]},
+  {type:"letter", question:"Where is T? 🔤", visual:"T", answer:"T", options:["F","L","T","P"]}
 ];
 
 let quizIndex=0;
@@ -395,6 +306,7 @@ function renderQuizQuestion(){
   prompt.style.marginBottom="14px";
   qEl.appendChild(prompt);
 
+  // Show the target visually above the choices.
   const visual=document.createElement("div");
   visual.style.cssText="font-size:100px;line-height:1.1;margin:8px 0 22px;font-weight:900;";
 
@@ -415,8 +327,8 @@ function renderQuizQuestion(){
     b.textContent=opt;
     b.onclick=()=>{
       if(opt===q.answer){
-        mEl.textContent="🎉 Great job! Correct!";
-        speak("Great job! Correct!");
+        mEl.textContent="🎉 Great job!";
+        speak("Great job!");
       }else{
         mEl.textContent="💛 Try again!";
         speak("Try again!");
