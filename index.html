@@ -48,7 +48,7 @@
   .label{font-size:21px;font-weight:800;margin-top:8px}
   .sub{font-size:13px;color:#7b8497;margin-top:3px}
   .big{
-    font-size:100px;font-weight:900;line-height:1;margin:8px 0 14px;
+    min-height:205px;font-weight:900;line-height:1;margin:8px 0 14px;
     color:#6c63ff;animation:bounce .8s ease;
   }
   @keyframes bounce{0%{transform:scale(.7);opacity:.2}65%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
@@ -182,7 +182,10 @@ const animalAudio={
   "Monkey":"https://upload.wikimedia.org/wikipedia/commons/b/b8/Howler_monkey.ogg",
   "Sheep":"https://upload.wikimedia.org/wikipedia/commons/2/28/Sheep_bleat.ogg",
   "Horse":"https://upload.wikimedia.org/wikipedia/commons/d/db/Wiehern.ogg",
-  "Elephant":"https://upload.wikimedia.org/wikipedia/commons/4/40/Elephant_voice_-_trumpeting.ogg"
+  "Elephant":"https://upload.wikimedia.org/wikipedia/commons/4/40/Elephant_voice_-_trumpeting.ogg",
+  "Giraffe":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Giraffe_Hum.oga",
+  "Zebra":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Gr%C3%A9vys_zebra_%28Sound_Effects%29.ogg",
+  "Frog":"https://commons.wikimedia.org/wiki/Special:Redirect/file/Frog_sounds.ogg"
 };
 
 let currentAnimalAudio=null;
@@ -205,7 +208,8 @@ function playRealAnimalSound(name){
 /* ---------- Animals ---------- */
 const animals=[
   ["🐱","Cat"],["🐶","Dog"],["🐮","Cow"],["🦁","Lion"],
-  ["🐒","Monkey"],["🐑","Sheep"],["🐴","Horse"],["🐘","Elephant"]
+  ["🐒","Monkey"],["🐑","Sheep"],["🐴","Horse"],["🐘","Elephant"],
+  ["🦒","Giraffe"],["🦓","Zebra"],["🐸","Frog"]
 ];
 const animalCards=document.getElementById("animalCards");
 animals.forEach(([emoji,name])=>{
@@ -243,23 +247,40 @@ for(let n=1;n<=12;n++){
 
 /* ---------- ABCD ---------- */
 const words={
-A:["Apple","🍎"],B:["Ball","⚽"],C:["Cat","🐱"],D:["Dog","🐶"],E:["Elephant","🐘"],F:["Fish","🐟"],
-G:["Grapes","🍇"],H:["Hat","🎩"],I:["Ice cream","🍦"],J:["Juice","🧃"],K:["Kite","🪁"],L:["Lion","🦁"],
-M:["Mango","🥭"],N:["Nest","🪺"],O:["Orange","🍊"],P:["Parrot","🦜"],Q:["Queen","👑"],R:["Rabbit","🐰"],
-S:["Sun","☀️"],T:["Tiger","🐯"],U:["Umbrella","☂️"],V:["Van","🚐"],W:["Whale","🐋"],X:["Xylophone","🎵"],
-Y:["Yo-yo","🪀"],Z:["Zebra","🦓"]
+  A:["Apple","🍎"],B:["Ball","⚽"],C:["Cat","🐱"],D:["Dog","🐶"],E:["Elephant","🐘"],F:["Fish","🐟"],
+  G:["Grapes","🍇"],H:["Hat","🎩"],I:["Ice cream","🍦"],J:["Juice","🧃"],K:["Kite","🪁"],L:["Lion","🦁"],
+  M:["Mango","🥭"],N:["Nest","🪺"],O:["Orange","🍊"],P:["Parrot","🦜"],Q:["Queen","👑"],R:["Rabbit","🐰"],
+  S:["Sun","☀️"],T:["Tiger","🐯"],U:["Umbrella","☂️"],V:["Van","🚐"],W:["Whale","🐋"],X:["Xylophone","🎵"],
+  Y:["Yo-yo","🪀"],Z:["Zebra","🦓"]
 };
-const letterGrid=document.getElementById("letterGrid"),letterBig=document.getElementById("letterBig");
+
+const letterGrid=document.getElementById("letterGrid");
+const letterBig=document.getElementById("letterBig");
+
+function showLetter(letter){
+  const [word,emoji]=words[letter];
+  letterBig.innerHTML=`
+    <div style="font-size:100px;line-height:.95">${letter}</div>
+    <div style="font-size:72px;line-height:1.1;margin-top:8px">${emoji}</div>
+    <div style="font-size:25px;font-weight:900;color:#25304a;margin-top:6px">${word}</div>
+  `;
+  letterBig.animate(
+    [{transform:"scale(.7)"},{transform:"scale(1.12)"},{transform:"scale(1)"}],
+    {duration:450}
+  );
+  speak(`${letter} for ${word}`);
+}
+
 Object.entries(words).forEach(([letter,[word,emoji]])=>{
-  const b=document.createElement("button");b.className="letter";
+  const b=document.createElement("button");
+  b.className="letter";
   b.innerHTML=`${letter}<small>${emoji} ${word}</small>`;
-  b.onclick=()=>{
-    letterBig.textContent=letter;
-    letterBig.animate([{transform:"scale(.7)"},{transform:"scale(1.15)"},{transform:"scale(1)"}],{duration:450});
-    speak(`${letter} for ${word}`);
-  };
+  b.onclick=()=>showLetter(letter);
   letterGrid.appendChild(b);
 });
+
+// Show the first example when ABCD is opened.
+showLetter("A");
 
 /* ---------- Tabs ---------- */
 document.querySelectorAll(".tab").forEach(tab=>{
@@ -278,6 +299,9 @@ const quizBank=[
   {type:"animal",question:"Where is the Cat?",spoken:"Where is the cat?",answer:"Cat",options:[{name:"Horse",emoji:"🐴"},{name:"Cat",emoji:"🐱"},{name:"Elephant",emoji:"🐘"},{name:"Dog",emoji:"🐶"}]},
   {type:"animal",question:"Where is the Elephant?",spoken:"Where is the elephant?",answer:"Elephant",options:[{name:"Monkey",emoji:"🐒"},{name:"Sheep",emoji:"🐑"},{name:"Elephant",emoji:"🐘"},{name:"Cow",emoji:"🐮"}]},
   {type:"animal",question:"Where is the Lion?",spoken:"Where is the lion?",answer:"Lion",options:[{name:"Lion",emoji:"🦁"},{name:"Tiger",emoji:"🐯"},{name:"Dog",emoji:"🐶"},{name:"Horse",emoji:"🐴"}]},
+  {type:"animal",question:"Where is the Giraffe?",spoken:"Where is the giraffe?",answer:"Giraffe",options:[{name:"Giraffe",emoji:"🦒"},{name:"Zebra",emoji:"🦓"},{name:"Frog",emoji:"🐸"},{name:"Elephant",emoji:"🐘"}]},
+  {type:"animal",question:"Where is the Zebra?",spoken:"Where is the zebra?",answer:"Zebra",options:[{name:"Horse",emoji:"🐴"},{name:"Zebra",emoji:"🦓"},{name:"Cow",emoji:"🐮"},{name:"Giraffe",emoji:"🦒"}]},
+  {type:"animal",question:"Where is the Frog?",spoken:"Where is the frog?",answer:"Frog",options:[{name:"Cat",emoji:"🐱"},{name:"Frog",emoji:"🐸"},{name:"Sheep",emoji:"🐑"},{name:"Monkey",emoji:"🐒"}]},
   {type:"color",question:"Where is Red?",spoken:"Where is red?",answer:"Red",options:[{name:"Red",color:"#ff5b5b"},{name:"Blue",color:"#4d8dff"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
   {type:"color",question:"Where is Blue?",spoken:"Where is blue?",answer:"Blue",options:[{name:"Purple",color:"#9b6cff"},{name:"Blue",color:"#4d8dff"},{name:"Orange",color:"#ff8b38"},{name:"Pink",color:"#ef72b6"}]},
   {type:"color",question:"Where is Green?",spoken:"Where is green?",answer:"Green",options:[{name:"Brown",color:"#9a6b45"},{name:"Pink",color:"#ef72b6"},{name:"Green",color:"#43bd72"},{name:"Yellow",color:"#f6c945"}]},
