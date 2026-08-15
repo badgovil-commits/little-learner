@@ -137,7 +137,7 @@ const letters = [
   {id:'D',name:'D for Dog',img:IMG.dog2}
 ];
 
-let currentTab='quiz';
+let currentTab='animals';
 let currentTarget=null;
 let locked=false;
 
@@ -162,46 +162,106 @@ function setTab(tab){
 }
 
 function render(){
-  if(currentTab==='animals') renderPictureQuiz('animals',animals);
-  else if(currentTab==='quiz') renderPictureQuiz('quiz',animals);
+  if(currentTab==='animals') renderAnimals();
+  else if(currentTab==='quiz') renderQuiz();
   else if(currentTab==='colours') renderColours();
   else if(currentTab==='numbers') renderNumbers();
   else renderLetters();
 }
 
-function renderPictureQuiz(kind,data){
-  locked=false;
-  const target=shuffle(data)[0];
-  currentTarget=target;
-  const options=shuffle(data);
-  const title=kind==='quiz' ? '🧠 Little Quiz' : '🐾 Learn Animals';
+/* ---------- ANIMALS LEARNING TAB ----------
+   This is intentionally NOT a quiz. Each card shows the animal,
+   its real photograph and its real recorded sound.
+*/
+function renderAnimals(){
   panel.innerHTML=`
-    <h2>${title}</h2>
-    <div class="prompt">Where is the ${target.name}? ${kind==='quiz'?'🐾':''}</div>
-    <button class="sound" id="soundBtn">🔊 Hear the real ${target.name.toLowerCase()} sound</button>
+    <h2>🐾 Learn Animals</h2>
+    <div class="sub">Tap an animal to see it and hear its real sound.</div>
     <div class="grid4">
-      ${options.map(x=>`
+      ${animals.map(x=>`
         <button class="choice" data-id="${x.id}" aria-label="${x.name}">
           <img src="${x.img}" alt="${x.name}" loading="eager">
           <div class="label">${x.name}</div>
         </button>`).join('')}
     </div>
-    <div id="feedback" class="feedback"></div>
-    <button id="next" class="next" style="display:none">Next Question ➜</button>
-    <div class="credits">Animal photographs and animal sounds are loaded from Wikimedia Commons.</div>`;
-  document.getElementById('soundBtn').onclick=()=>playSound(target.id);
-  document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answer(btn,target.id));
-  document.getElementById('next').onclick=render;
+    <div id="animalMessage" class="feedback"></div>
+    <div class="credits">Animal photographs and real animal recordings are loaded from Wikimedia Commons.</div>`;
+
+  document.querySelectorAll('#panel .choice').forEach(btn=>{
+    btn.onclick=()=>{
+      const animal=animals.find(x=>x.id===btn.dataset.id);
+      document.querySelectorAll('#panel .choice').forEach(x=>x.classList.remove('correct'));
+      btn.classList.add('correct');
+      document.getElementById('animalMessage').textContent=`🔊 ${animal.name} sound`;
+      playSound(animal.id);
+      speak(animal.name);
+    };
+  });
 }
+
+/* ---------- QUIZ TAB ----------
+   Quiz is kept separate from the Animals learning tab.
+*/
+function renderQuiz(){
+  locked=false;
+  const q=shuffle(quizBank)[0];
+  currentTarget=q;
+  panel.innerHTML=`
+    <h2>🧠 Little Quiz</h2>
+    <div class="prompt">${q.question}</div>
+    ${q.type==='animal' ? `<button class="sound" id="quizSound">🔊 Hear the real ${q.answer.toLowerCase()} sound</button>` : ''}
+    <div class="grid4 ${q.type==='color'?'color-grid':''}">
+      ${q.options.map(opt=>{
+        if(q.type==='color'){
+          const c=colours.find(x=>x.name===opt);
+          return `<button class="choice" data-id="${opt}"><div class="color-dot" style="background:${c.value}"></div><div class="label">${opt}</div></button>`;
+        }
+        if(q.type==='animal'){
+          const a=animals.find(x=>x.name===opt);
+          return `<button class="choice" data-id="${opt}"><img src="${a.img}" alt="${opt}" loading="eager"><div class="label">${opt}</div></button>`;
+        }
+        if(q.type==='letter'){
+          const l=letters.find(x=>x.id===opt);
+          return `<button class="choice letter-card" data-id="${opt}"><img src="${l.img}" alt="${l.name}"><div class="big">${opt}</div></button>`;
+        }
+        return `<button class="choice number-card" data-id="${opt}">${opt}</button>`;
+      }).join('')}
+    </div>
+    <div id="feedback" class="feedback"></div>
+    <button id="next" class="next">Next Question ➜</button>`;
+  document.getElementById('next').onclick=render;
+  if(q.type==='animal') document.getElementById('quizSound').onclick=()=>playSound(q.answer.toLowerCase());
+  document.querySelectorAll('#panel .choice').forEach(btn=>btn.onclick=()=>answer(btn,q.answer));
+}
+
+const quizBank = [
+  {type:'animal',question:'Where is the Cow? 🐮',answer:'Cow',options:['Cow','Cat','Dog','Lion']},
+  {type:'animal',question:'Where is the Cat? 🐱',answer:'Cat',options:['Cat','Dog','Cow','Lion']},
+  {type:'animal',question:'Where is the Dog? 🐶',answer:'Dog',options:['Dog','Cat','Cow','Lion']},
+  {type:'animal',question:'Where is the Lion? 🦁',answer:'Lion',options:['Lion','Cat','Cow','Dog']},
+  {type:'color',question:'Where is Red? 🔴',answer:'Red',options:['Red','Blue','Green','Yellow']},
+  {type:'color',question:'Where is Blue? 🔵',answer:'Blue',options:['Green','Blue','Purple','Orange']},
+  {type:'color',question:'Where is Green? 🟢',answer:'Green',options:['Pink','Brown','Green','Yellow']},
+  {type:'color',question:'Where is Yellow? 🟡',answer:'Yellow',options:['Purple','Red','Yellow','Orange']},
+  {type:'number',question:'Where is 7? 🔢',answer:'7',options:['7','4','9','2']},
+  {type:'number',question:'Where is 3? 🔢',answer:'3',options:['8','3','5','1']},
+  {type:'number',question:'Where is 10? 🔢',answer:'10',options:['6','9','10','12']},
+  {type:'number',question:'Where is 5? 🔢',answer:'5',options:['2','8','5','7']},
+  {type:'letter',question:'Where is A? 🔤',answer:'A',options:['A','B','C','D']},
+  {type:'letter',question:'Where is M? 🔤',answer:'M',options:['N','W','M','H']},
+  {type:'letter',question:'Where is S? 🔤',answer:'S',options:['C','S','G','Z']},
+  {type:'letter',question:'Where is T? 🔤',answer:'T',options:['F','L','T','P']}
+];
 
 function answer(btn,targetId){
   if(locked)return;
-  const id=btn.dataset.id;
-  if(id===targetId){
-    locked=true; btn.classList.add('correct');
+  if(btn.dataset.id===targetId){
+    locked=true;
+    btn.classList.add('correct');
     document.getElementById('feedback').textContent='🎉 Great job!';
     speak('Great job!');
-    document.getElementById('next').style.display='inline-block';
+    document.querySelectorAll('#panel .choice').forEach(x=>x.disabled=true);
+    const next=document.getElementById('next'); if(next) next.style.display='inline-block';
   }else{
     btn.classList.add('wrong');
     document.getElementById('feedback').textContent='Try again! 👆';
@@ -271,20 +331,7 @@ function renderLetters(){
   document.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answerGeneric(btn,currentTarget.id));
   document.getElementById('next').onclick=render;
 }
-function answerGeneric(btn,targetId){
-  if(locked)return;
-  if(btn.dataset.id===targetId){
-    locked=true;btn.classList.add('correct');
-    document.getElementById('feedback').textContent='🎉 Great job!';
-    speak('Great job!');
-    document.getElementById('next').style.display='inline-block';
-  }else{
-    btn.classList.add('wrong');
-    document.getElementById('feedback').textContent='Try again! 👆';
-    speak('Try again');
-    setTimeout(()=>btn.classList.remove('wrong'),450);
-  }
-}
+function answerGeneric(btn,targetId){ answer(btn,targetId); }
 
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 render();
