@@ -197,7 +197,7 @@ animalCards.appendChild(b);
 });
 
 /* Colours */
-const colors=[["Red","#ff5b5b"],["Blue","#4d8dff"],["Yellow","#f6c945"],["Green","#43bd72"],["Orange","#ff8b38"],["Purple","#9b6cff"],["Pink","#ef72b6"],["Brown","#9a6b45"]];
+const colors=[["Red","#ff5b5b"],["Blue","#4d8dff"],["Yellow","#f6c945"],["Green","#43bd72"],["Orange","#ff8b38"],["Purple","#9b6cff"],["Pink","#ef72b6"],["Brown","#9a6b45"],["Black","#20242b"],["White","#f7f7f7"],["Grey","#8b95a5"],["Gold","#f4b400"],["Silver","#aeb7c2"],["Sky Blue","#63c7ff"],["Navy Blue","#304ffe"],["Turquoise","#21c7b7"],["Lime","#9bd23c"],["Teal","#008f83"],["Magenta","#d83a9e"],["Peach","#ffad8f"],["Maroon","#8b1e3f"],["Beige","#d8c3a5"],["Lavender","#b9a7ff"],["Mint","#7ee2b8"]];
 colors.forEach(([name,bg])=>{const b=document.createElement("button");b.className="color-card";b.style.background=bg;b.textContent=name;b.onclick=()=>{speak(name);b.animate([{transform:"scale(1)"},{transform:"scale(1.08)"},{transform:"scale(1)"}],{duration:350})};document.getElementById("colorGrid").appendChild(b)});
 
 /* Numbers */
