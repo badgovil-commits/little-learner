@@ -130,7 +130,7 @@
   .draw-tool,.draw-color{border:0;border-radius:14px;padding:10px 13px;background:#eef0ff;color:#4f48bb;font-weight:900;cursor:pointer}
   .draw-tool.active,.draw-color.active{background:#6c63ff;color:#fff}
   .draw-color{width:42px;height:42px;padding:0;border:4px solid #fff;box-shadow:0 3px 10px #243b5325}
-  #drawingCanvas{width:100%;height:min(65vh,420px);display:block;background:#fff;border:3px dashed #d7dcf2;border-radius:22px;touch-action:none;box-shadow:inset 0 2px 10px #243b5310}
+  #drawingCanvas{width:100%;height:min(65vh,420px);display:block;background:#fff;border:3px dashed #d7dcf2;border-radius:22px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;box-shadow:inset 0 2px 10px #243b5310}
   .draw-size{width:100%;max-width:360px;accent-color:#6c63ff}
   .draw-hint{font-size:13px;color:#788197;margin-top:8px}
   @media(max-width:430px){.tabs{display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:8px}.tabs::-webkit-scrollbar{display:none}.tab{flex:0 0 auto;min-width:88px}}
@@ -280,24 +280,41 @@
 
 <script>
 /* ---------- Speech ---------- */
+let speechReady=false;
+function unlockSpeech(){
+  try{
+    if(window.speechSynthesis){
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.resume();
+    }
+  }catch(e){}
+  speechReady=true;
+}
+if(window.speechSynthesis){
+  try{ window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices(); }catch(e){}
+}
+
 function speak(text){
   try{
     if(!window.speechSynthesis || !window.SpeechSynthesisUtterance)return;
     const synth=window.speechSynthesis;
+    unlockSpeech();
     synth.cancel();
-    synth.resume();
     const u=new SpeechSynthesisUtterance(String(text));
     u.lang='en-US';
     u.rate=.78;
     u.pitch=1.15;
     u.volume=1.0;
-    // iPhone Safari can occasionally ignore an utterance immediately
-    // after cancel(); starting it on the next event loop is more reliable.
-    setTimeout(()=>{
-      try{ synth.resume(); synth.speak(u); }catch(e){}
-    },40);
+    // IMPORTANT for iPhone Safari: speak synchronously from the user's
+    // tap/click instead of putting synth.speak() inside setTimeout().
+    synth.resume();
+    synth.speak(u);
   }catch(e){}
 }
+
+// Unlock speech/audio on the first real user interaction.
+document.addEventListener('touchstart',unlockSpeech,{once:true,passive:true});
+document.addEventListener('click',unlockSpeech,{once:true,passive:true});
 
 /* ---------- REAL ANIMAL SOUNDS ----------
    Actual animal recordings — no generated tones and no
@@ -436,7 +453,7 @@ document.querySelectorAll(".tab").forEach(tab=>{
     // The drawing canvas starts inside a hidden tab, so its first size can
     // be calculated as 0px. Re-size it after the Drawing tab becomes visible.
     if(tab.dataset.tab === "drawing"){
-      setTimeout(()=>window.dispatchEvent(new Event("resize")),60);
+      setTimeout(()=>window.refreshDrawingCanvas&&window.refreshDrawingCanvas(),80);
     }
   };
 });
@@ -750,12 +767,11 @@ shapeCards.forEach(card=>{
 (function(){
   const canvas=document.getElementById("drawingCanvas");
   if(!canvas)return;
-  const ctx=canvas.getContext("2d",{willReadFrequently:false});
+  const ctx=canvas.getContext("2d");
   let drawing=false,color="#25304a",size=9,erasing=false,history=[];
 
   function resizeCanvas(){
     const rect=canvas.getBoundingClientRect();
-    // If the Drawing tab is hidden, wait until it is visible.
     if(rect.width<2 || rect.height<2)return;
     const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
     let data=null;
@@ -778,9 +794,15 @@ shapeCards.forEach(card=>{
     }
   }
 
-  function pos(e){
+  function posFromClient(clientX,clientY){
     const r=canvas.getBoundingClientRect();
-    return{x:e.clientX-r.left,y:e.clientY-r.top};
+    return {x:clientX-r.left,y:clientY-r.top};
+  }
+  function pos(e){
+    if(e.touches && e.touches.length){
+      return posFromClient(e.touches[0].clientX,e.touches[0].clientY);
+    }
+    return posFromClient(e.clientX,e.clientY);
   }
   function snapshot(){
     if(canvas.width<2 || canvas.height<2)return;
@@ -789,9 +811,10 @@ shapeCards.forEach(card=>{
       history.push(canvas.toDataURL("image/png"));
     }catch(_){ }
   }
-  function start(e){
-    if(e.pointerType==="mouse" && e.button!==0)return;
-    e.preventDefault();
+  function beginAt(e){
+    if(e.type==='pointerdown' && e.pointerType==='mouse' && e.button!==0)return;
+    if(e.cancelable)e.preventDefault();
+    if(!canvas.width || !canvas.height)return;
     snapshot();
     drawing=true;
     const p=pos(e);
@@ -801,26 +824,45 @@ shapeCards.forEach(card=>{
     ctx.lineWidth=size;
     ctx.lineTo(p.x+.1,p.y+.1);
     ctx.stroke();
-    try{canvas.setPointerCapture(e.pointerId)}catch(_){ }
+    if(e.pointerId!=null){try{canvas.setPointerCapture(e.pointerId)}catch(_){}}
   }
-  function move(e){
+  function moveAt(e){
     if(!drawing)return;
-    e.preventDefault();
+    if(e.cancelable)e.preventDefault();
     const p=pos(e);
     ctx.lineTo(p.x,p.y);
     ctx.stroke();
   }
-  function end(e){
+  function endAt(e){
+    if(!drawing)return;
     drawing=false;
-    try{if(e.pointerId!=null)canvas.releasePointerCapture(e.pointerId)}catch(_){ }
+    if(e.pointerId!=null){try{canvas.releasePointerCapture(e.pointerId)}catch(_){}}
     ctx.closePath();
   }
 
-  canvas.addEventListener("pointerdown",start,{passive:false});
-  canvas.addEventListener("pointermove",move,{passive:false});
-  canvas.addEventListener("pointerup",end);
-  canvas.addEventListener("pointercancel",end);
-  canvas.addEventListener("pointerleave",e=>{if(drawing)move(e)} ,{passive:false});
+  // Pointer events for modern browsers.
+  canvas.addEventListener("pointerdown",beginAt,{passive:false});
+  canvas.addEventListener("pointermove",moveAt,{passive:false});
+  canvas.addEventListener("pointerup",endAt,{passive:false});
+  canvas.addEventListener("pointercancel",endAt,{passive:false});
+
+  // Explicit touch fallback for iPhone/iPad WebKit and installed PWA mode.
+  // These are intentionally kept in addition to pointer events; duplicate
+  // prevention stops a single touch from creating two strokes.
+  let lastTouchTime=0;
+  canvas.addEventListener("touchstart",e=>{
+    lastTouchTime=Date.now();
+    beginAt(e);
+  },{passive:false});
+  canvas.addEventListener("touchmove",e=>{
+    moveAt(e);
+  },{passive:false});
+  canvas.addEventListener("touchend",e=>{
+    endAt(e);
+  },{passive:false});
+  canvas.addEventListener("touchcancel",e=>{
+    endAt(e);
+  },{passive:false});
 
   const pencil=document.getElementById("pencilTool");
   const eraser=document.getElementById("eraserTool");
@@ -871,12 +913,11 @@ shapeCards.forEach(card=>{
     }catch(e){ }
   };
 
-  window.addEventListener("resize",resizeCanvas);
-  window.addEventListener("orientationchange",()=>setTimeout(resizeCanvas,100));
+  window.addEventListener("resize",()=>setTimeout(resizeCanvas,30));
+  window.addEventListener("orientationchange",()=>setTimeout(resizeCanvas,150));
   window.addEventListener("pageshow",()=>setTimeout(resizeCanvas,100));
-  resizeCanvas();
-  // Expose a small safe hook for tab switching.
-  window.refreshDrawingCanvas=()=>setTimeout(resizeCanvas,20);
+  window.refreshDrawingCanvas=()=>setTimeout(resizeCanvas,30);
+  setTimeout(resizeCanvas,100);
 })();
 </script>
 </body>
