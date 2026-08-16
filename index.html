@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#6c63ff">
 <title>Little Learner</title>
+<!-- Shapes fixed: static shape cards + independent click handlers v2026-08-17 -->
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
@@ -113,7 +114,7 @@
   @keyframes successFade{0%,75%{opacity:1}100%{opacity:0}}
 
   /* ---------- Shapes + Drawing ---------- */
-  .shape-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:15px}
+  .shape-grid{display:grid !important;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:15px;visibility:visible !important;opacity:1 !important}
   .shape-card{border:0;background:#fff;border-radius:24px;padding:18px 10px;min-height:150px;box-shadow:0 8px 22px #243b5318;cursor:pointer;color:#25304a;font-weight:900;font-size:18px}
   .shape-card:active{transform:scale(.96)}
   .shape-preview{height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
@@ -187,7 +188,16 @@
 
 
 <section id="shapes" class="screen">
-  <div class="hero"><h2>🔷 Shapes</h2><p>Tap a shape to see it and hear its name.</p><div class="shape-grid" id="shapeGrid"></div><div class="sound-note">🔊 Tap any shape to hear its name.</div></div>
+  <div class="hero"><h2>🔷 Shapes</h2><p>Tap a shape to see it and hear its name.</p><div class="shape-grid" id="shapeGrid">
+        <button type="button" class="shape-card" data-shape-name="Circle"><div class="shape-preview"><div class="shape-circle"></div></div><div>Circle</div></button>
+        <button type="button" class="shape-card" data-shape-name="Square"><div class="shape-preview"><div class="shape-square"></div></div><div>Square</div></button>
+        <button type="button" class="shape-card" data-shape-name="Triangle"><div class="shape-preview"><div class="shape-triangle"></div></div><div>Triangle</div></button>
+        <button type="button" class="shape-card" data-shape-name="Rectangle"><div class="shape-preview"><div class="shape-rectangle"></div></div><div>Rectangle</div></button>
+        <button type="button" class="shape-card" data-shape-name="Star"><div class="shape-preview"><div class="shape-star">★</div></div><div>Star</div></button>
+        <button type="button" class="shape-card" data-shape-name="Heart"><div class="shape-preview"><div class="shape-heart">♥</div></div><div>Heart</div></button>
+        <button type="button" class="shape-card" data-shape-name="Oval"><div class="shape-preview"><div class="shape-oval"></div></div><div>Oval</div></button>
+        <button type="button" class="shape-card" data-shape-name="Diamond"><div class="shape-preview"><div class="shape-diamond"></div></div><div>Diamond</div></button>
+      </div><div class="sound-note">🔊 Tap any shape to hear its name.</div></div>
 </section>
 <section id="drawing" class="screen">
   <div class="hero"><h2>🖍️ Drawing</h2><p>Draw with your finger and have fun!</p>
@@ -710,9 +720,14 @@ if(diff)diff.onchange=()=>renderGame();
 updateDailyGoal();
 
 /* ---------- Shapes ---------- */
-const shapeDefs=[["Circle","shape-circle"],["Square","shape-square"],["Triangle","shape-triangle"],["Rectangle","shape-rectangle"],["Star","shape-star"],["Heart","shape-heart"],["Oval","shape-oval"],["Diamond","shape-diamond"]];
-const shapeGrid=document.getElementById("shapeGrid");
-if(shapeGrid){shapeDefs.forEach(([name,cls])=>{const b=document.createElement("button");b.type="button";b.className="shape-card";const visual=(cls==="shape-star"||cls==="shape-heart")?`<div class="shape-preview"><div class="${cls}">${cls==="shape-star"?"★":"♥"}</div></div>`:`<div class="shape-preview"><div class="${cls}"></div></div>`;b.innerHTML=visual+`<div>${name}</div>`;b.onclick=()=>{speak(name);b.animate([{transform:"scale(1)"},{transform:"scale(1.07)"},{transform:"scale(1)"}],{duration:350});};shapeGrid.appendChild(b);});}
+const shapeCards=document.querySelectorAll('#shapeGrid .shape-card');
+shapeCards.forEach(card=>{
+  card.addEventListener('click',()=>{
+    const name=card.dataset.shapeName||card.textContent.trim();
+    speak(name);
+    card.animate([{transform:'scale(1)'},{transform:'scale(1.07)'},{transform:'scale(1)'}],{duration:350});
+  });
+});
 
 /* ---------- Drawing Board ---------- */
 (function(){const canvas=document.getElementById("drawingCanvas");if(!canvas)return;const ctx=canvas.getContext("2d");let drawing=false,color="#25304a",size=9,erasing=false,history=[];
@@ -725,23 +740,6 @@ const pencil=document.getElementById("pencilTool"),eraser=document.getElementByI
 document.querySelectorAll(".draw-color").forEach(b=>b.onclick=()=>{color=b.dataset.drawColor;mode(false);document.querySelectorAll(".draw-color").forEach(x=>x.classList.remove("active"));b.classList.add("active");});document.getElementById("brushSize").oninput=e=>size=Number(e.target.value);
 document.getElementById("undoDrawing").onclick=()=>{const data=history.pop();const r=canvas.getBoundingClientRect();ctx.fillStyle="#fff";ctx.fillRect(0,0,r.width,r.height);if(data){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,r.width,r.height);img.src=data;}};
 document.getElementById("clearDrawing").onclick=()=>{snapshot();const r=canvas.getBoundingClientRect();ctx.fillStyle="#fff";ctx.fillRect(0,0,r.width,r.height);};document.getElementById("saveDrawing").onclick=()=>{try{const a=document.createElement("a");a.download="little-learner-drawing.png";a.href=canvas.toDataURL("image/png");a.click();}catch(e){}};window.addEventListener("resize",resizeCanvas);resizeCanvas();})();
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      const registration = await navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" });
-      await registration.update();
-    } catch (e) {}
-  });
-
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (!sessionStorage.getItem("littleLearnerSWReloaded")) {
-      sessionStorage.setItem("littleLearnerSWReloaded", "1");
-      window.location.reload();
-    }
-  });
-}
 </script>
 </body>
 </html>
