@@ -726,5 +726,22 @@ document.querySelectorAll(".draw-color").forEach(b=>b.onclick=()=>{color=b.datas
 document.getElementById("undoDrawing").onclick=()=>{const data=history.pop();const r=canvas.getBoundingClientRect();ctx.fillStyle="#fff";ctx.fillRect(0,0,r.width,r.height);if(data){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,r.width,r.height);img.src=data;}};
 document.getElementById("clearDrawing").onclick=()=>{snapshot();const r=canvas.getBoundingClientRect();ctx.fillStyle="#fff";ctx.fillRect(0,0,r.width,r.height);};document.getElementById("saveDrawing").onclick=()=>{try{const a=document.createElement("a");a.download="little-learner-drawing.png";a.href=canvas.toDataURL("image/png");a.click();}catch(e){}};window.addEventListener("resize",resizeCanvas);resizeCanvas();})();
 </script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" });
+      await registration.update();
+    } catch (e) {}
+  });
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!sessionStorage.getItem("littleLearnerSWReloaded")) {
+      sessionStorage.setItem("littleLearnerSWReloaded", "1");
+      window.location.reload();
+    }
+  });
+}
+</script>
 </body>
 </html>
