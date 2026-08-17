@@ -765,7 +765,9 @@ document.querySelectorAll('#shapeGrid .shape-card').forEach(card=>{
   card.type='button';
   const name=card.dataset.shapeName||card.textContent.trim();
   card.onclick=()=>{
-    speak(name);
+    // Shapes intentionally use the same speech path as the other learning tabs.
+    // Do not use a separate shape-audio player or embedded shape clip here.
+    fallbackSpeech(name);
     card.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
   };
 });
