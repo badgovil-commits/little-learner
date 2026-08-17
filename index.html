@@ -760,13 +760,54 @@ if(diff)diff.onchange=()=>renderGame();
 
 updateDailyGoal();
 
-/* ---------- Shapes: exactly one sound event per tap ---------- */
+/* ---------- Shapes: dedicated iPhone/iPad audio playback ---------- */
+/*
+   Shapes use their own reusable HTMLAudioElement. This keeps shape audio
+   independent from the general speech engine and starts playback directly
+   from the child's pointer gesture.
+*/
+const shapeAudio=document.createElement('audio');
+shapeAudio.preload='auto';
+shapeAudio.playsInline=true;
+shapeAudio.setAttribute('playsinline','');
+shapeAudio.volume=1;
+document.body.appendChild(shapeAudio);
+
+function playShapeAudio(name){
+  const src=learningAudioBank[name];
+  try{
+    if(!src){
+      fallbackSpeech(name);
+      return;
+    }
+    shapeAudio.pause();
+    shapeAudio.currentTime=0;
+    shapeAudio.src=src;
+    shapeAudio.load();
+    const p=shapeAudio.play();
+    if(p && p.catch){
+      p.catch(()=>{
+        try{
+          shapeAudio.pause();
+          shapeAudio.currentTime=0;
+          fallbackSpeech(name);
+        }catch(e){ fallbackSpeech(name); }
+      });
+    }
+  }catch(e){ fallbackSpeech(name); }
+}
+
 document.querySelectorAll('#shapeGrid .shape-card').forEach(card=>{
   card.type='button';
   const name=card.dataset.shapeName||card.textContent.trim();
-  card.addEventListener('click',()=>{
-    speak(name);
-    card.animate([{transform:'scale(1)'},{transform:'scale(1.07)'},{transform:'scale(1)'}],{duration:350});
+  /* pointerdown is the actual iPhone/iPad touch gesture. */
+  card.addEventListener('pointerdown',(event)=>{
+    if(event.pointerType==='mouse' && event.button!==0)return;
+    playShapeAudio(name);
+    card.animate(
+      [{transform:'scale(1)'},{transform:'scale(1.07)'},{transform:'scale(1)'}],
+      {duration:350}
+    );
   },{passive:true});
 });
 
