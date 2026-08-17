@@ -500,17 +500,31 @@ function updateStars(){
   if(typeof renderParent==="function") renderParent();
 }
 
+let celebrationAudioUnlocked=false;
+let celebrationAudioCtx=null;
+let celebrationGain=null;
+function unlockCelebrationAudio(){
+  try{
+    const a=document.getElementById("clapAudio");
+    if(!a)return;
+    a.muted=true; a.volume=1;
+    const p=a.play();
+    if(p&&p.then){
+      p.then(()=>{a.pause();a.currentTime=0;a.muted=false;celebrationAudioUnlocked=true;}).catch(()=>{a.muted=false;});
+    }else{a.pause();a.currentTime=0;a.muted=false;celebrationAudioUnlocked=true;}
+  }catch(e){}
+}
 function clap(){
   try{
     const a=document.getElementById("clapAudio");
     if(!a)return;
-    a.pause(); a.currentTime=0;
-    const p=a.play(); if(p&&p.catch)p.catch(()=>{});
-    setTimeout(()=>{
-      try{a.currentTime=0;const p2=a.play();if(p2&&p2.catch)p2.catch(()=>{});}catch(e){}
-    },210);
+    a.pause(); a.currentTime=0; a.muted=false; a.volume=1;
+    const p=a.play();
+    if(p&&p.catch)p.catch(()=>{});
   }catch(e){}
 }
+document.addEventListener("pointerdown",unlockCelebrationAudio,{passive:true});
+document.addEventListener("touchstart",unlockCelebrationAudio,{passive:true});
 
 function confetti(){
   const pieces=["⭐","🎉","✨","👏","🌟"];
@@ -543,7 +557,6 @@ function renderQuizQuestion(){
   mEl.textContent="";
   oEl.innerHTML="";
   lastAnswered=false;
-  speak(q.spoken);
 
   [...q.options].sort(()=>Math.random()-.5).forEach(opt=>{
     const b=document.createElement("button");
@@ -588,6 +601,12 @@ document.getElementById("nextQuiz").onclick=()=>{
   quizIndex=(quizIndex+1)%quizBank.length;
   renderQuizQuestion();
 };
+const quizSpeakBtn=document.createElement("button");
+quizSpeakBtn.className="action secondary";
+quizSpeakBtn.type="button";
+quizSpeakBtn.textContent="🔊 Hear Question";
+quizSpeakBtn.onclick=()=>speak(quizBank[quizIndex].spoken);
+document.getElementById("nextQuiz").before(quizSpeakBtn);
 
 updateStars();
 renderQuizQuestion();
@@ -655,7 +674,6 @@ function renderGame(){
   document.getElementById("gameMessage").textContent="";
   const v=document.getElementById("gameVisual"); v.innerHTML="";
   const o=document.getElementById("gameOptions"); o.innerHTML="";
-  speak(q.spoken);
 
   if(q.visual)v.textContent=q.visual;
 
@@ -694,6 +712,16 @@ document.querySelectorAll(".miniChoice").forEach(b=>{
   };
 });
 document.getElementById("nextGame").onclick=()=>{gameIndex++;renderGame()};
+const gameSpeakBtn=document.createElement("button");
+gameSpeakBtn.className="action secondary";
+gameSpeakBtn.type="button";
+gameSpeakBtn.textContent="🔊 Hear Question";
+gameSpeakBtn.onclick=()=>{
+  const list=gameBank.filter(x=>x.type===gameType);
+  const q=list[gameIndex % list.length];
+  speak(q.spoken);
+};
+document.getElementById("nextGame").before(gameSpeakBtn);
 
 function renderParent(){
   const p=getProgress();
@@ -840,29 +868,14 @@ shapeCards.forEach(card=>{
     ctx.closePath();
   }
 
-  // Pointer events for modern browsers.
+  // Pointer events are the primary input method.
+  // On iPhone/iPad, WebKit exposes touch as pointer events, so do NOT attach
+  // a second touch drawing path (that would duplicate every stroke).
   canvas.addEventListener("pointerdown",beginAt,{passive:false});
   canvas.addEventListener("pointermove",moveAt,{passive:false});
   canvas.addEventListener("pointerup",endAt,{passive:false});
   canvas.addEventListener("pointercancel",endAt,{passive:false});
-
-  // Explicit touch fallback for iPhone/iPad WebKit and installed PWA mode.
-  // These are intentionally kept in addition to pointer events; duplicate
-  // prevention stops a single touch from creating two strokes.
-  let lastTouchTime=0;
-  canvas.addEventListener("touchstart",e=>{
-    lastTouchTime=Date.now();
-    beginAt(e);
-  },{passive:false});
-  canvas.addEventListener("touchmove",e=>{
-    moveAt(e);
-  },{passive:false});
-  canvas.addEventListener("touchend",e=>{
-    endAt(e);
-  },{passive:false});
-  canvas.addEventListener("touchcancel",e=>{
-    endAt(e);
-  },{passive:false});
+  canvas.addEventListener("pointerleave",endAt,{passive:false});
 
   const pencil=document.getElementById("pencilTool");
   const eraser=document.getElementById("eraserTool");
@@ -913,12 +926,20 @@ shapeCards.forEach(card=>{
     }catch(e){ }
   };
 
-  window.addEventListener("resize",()=>setTimeout(resizeCanvas,30));
-  window.addEventListener("orientationchange",()=>setTimeout(resizeCanvas,150));
-  window.addEventListener("pageshow",()=>setTimeout(resizeCanvas,100));
-  window.refreshDrawingCanvas=()=>setTimeout(resizeCanvas,30);
-  setTimeout(resizeCanvas,100);
+  window.addEventListener("resize",()=>setTimeout(resizeCanvas,80));
+  window.addEventListener("orientationchange",()=>setTimeout(resizeCanvas,250));
+  window.addEventListener("pageshow",()=>setTimeout(resizeCanvas,150));
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",()=>setTimeout(resizeCanvas,100));
+  }
+  window.refreshDrawingCanvas=()=>setTimeout(resizeCanvas,60);
+  setTimeout(resizeCanvas,120);
 })();
+// iOS Safari can suspend speech after returning to the PWA. Resume the engine
+// when the app becomes visible again; speech still only starts from user actions.
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden){ try{window.speechSynthesis&&window.speechSynthesis.resume()}catch(e){} }
+});
 </script>
 </body>
 </html>
