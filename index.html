@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#6c63ff">
 <title>Little Learner</title>
-<!-- Little Learner FIXED v2026-08-17: loud celebration + ABCD scroll + iPhone touch/audio -->
+<!-- Little Learner SOUND FIX v2026-08-17: one unified iPhone/iPad speech engine for all learning sections + animal fallback + direct Shape pointerdown -->
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
@@ -190,14 +190,14 @@
 
 <section id="shapes" class="screen">
   <div class="hero"><h2>🔷 Shapes</h2><p>Tap a shape to see it and hear its name.</p><div class="shape-grid" id="shapeGrid">
-        <button type="button" class="shape-card" data-shape-name="Circle"><div class="shape-preview"><div class="shape-circle"></div></div><div>Circle</div></button>
-        <button type="button" class="shape-card" data-shape-name="Square"><div class="shape-preview"><div class="shape-square"></div></div><div>Square</div></button>
-        <button type="button" class="shape-card" data-shape-name="Triangle"><div class="shape-preview"><div class="shape-triangle"></div></div><div>Triangle</div></button>
-        <button type="button" class="shape-card" data-shape-name="Rectangle"><div class="shape-preview"><div class="shape-rectangle"></div></div><div>Rectangle</div></button>
-        <button type="button" class="shape-card" data-shape-name="Star"><div class="shape-preview"><div class="shape-star">★</div></div><div>Star</div></button>
-        <button type="button" class="shape-card" data-shape-name="Heart"><div class="shape-preview"><div class="shape-heart">♥</div></div><div>Heart</div></button>
-        <button type="button" class="shape-card" data-shape-name="Oval"><div class="shape-preview"><div class="shape-oval"></div></div><div>Oval</div></button>
-        <button type="button" class="shape-card" data-shape-name="Diamond"><div class="shape-preview"><div class="shape-diamond"></div></div><div>Diamond</div></button>
+        <button type="button" class="shape-card" data-shape-name="Circle" onclick="speak('Circle')"><div class="shape-preview"><div class="shape-circle"></div></div><div>Circle</div></button>
+        <button type="button" class="shape-card" data-shape-name="Square" onclick="speak('Square')"><div class="shape-preview"><div class="shape-square"></div></div><div>Square</div></button>
+        <button type="button" class="shape-card" data-shape-name="Triangle" onclick="speak('Triangle')"><div class="shape-preview"><div class="shape-triangle"></div></div><div>Triangle</div></button>
+        <button type="button" class="shape-card" data-shape-name="Rectangle" onclick="speak('Rectangle')"><div class="shape-preview"><div class="shape-rectangle"></div></div><div>Rectangle</div></button>
+        <button type="button" class="shape-card" data-shape-name="Star" onclick="speak('Star')"><div class="shape-preview"><div class="shape-star">★</div></div><div>Star</div></button>
+        <button type="button" class="shape-card" data-shape-name="Heart" onclick="speak('Heart')"><div class="shape-preview"><div class="shape-heart">♥</div></div><div>Heart</div></button>
+        <button type="button" class="shape-card" data-shape-name="Oval" onclick="speak('Oval')"><div class="shape-preview"><div class="shape-oval"></div></div><div>Oval</div></button>
+        <button type="button" class="shape-card" data-shape-name="Diamond" onclick="speak('Diamond')"><div class="shape-preview"><div class="shape-diamond"></div></div><div>Diamond</div></button>
       </div><div class="sound-note">🔊 Tap any shape to hear its name.</div></div>
 </section>
 <section id="drawing" class="screen">
@@ -280,42 +280,118 @@
 </div>
 
 <script>
-/* ---------- Speech ---------- */
-let speechReady=false;
+/* ---------- UNIFIED LEARNING SOUND ENGINE ---------- */
+/*
+   Every learning section uses this ONE function:
+   Animals (name fallback), Colours, Numbers, ABCD, Shapes, Quiz and Games.
+
+   Important iPhone/iPad rules:
+   - speak() is called directly from the user's tap.
+   - Do not use setTimeout() to start speech.
+   - Do not require a particular voice to exist.
+   - If iOS has a stale/paused speech engine, resume it before speaking.
+*/
+let speechReady = false;
+
 function unlockSpeech(){
   try{
-    if(window.speechSynthesis){
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.resume();
+    const synth = window.speechSynthesis;
+    if(!synth) return false;
+    synth.getVoices();
+    synth.resume();
+    speechReady = true;
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+if(window.speechSynthesis){
+  try{
+    window.speechSynthesis.onvoiceschanged = function(){
+      try{ window.speechSynthesis.getVoices(); }catch(e){}
+      speechReady = true;
+    };
+  }catch(e){}
+}
+
+/* This is the ONLY function used for spoken learning names/questions. */
+function speak(text){
+  const phrase = String(text == null ? "" : text).trim();
+  if(!phrase) return false;
+
+  try{
+    const synth = window.speechSynthesis;
+    if(!synth || !window.SpeechSynthesisUtterance) return false;
+
+    unlockSpeech();
+
+    /*
+      Cancel only an already-running utterance. This prevents an old
+      question/word from blocking the new tap, while avoiding an unnecessary
+      cancel/resume cycle when the engine is idle.
+    */
+    if(synth.speaking || synth.pending){
+      synth.cancel();
+    }
+    synth.resume();
+
+    const u = new SpeechSynthesisUtterance(phrase);
+    u.lang = "en-US";
+    u.rate = 0.78;
+    u.pitch = 1.12;
+    u.volume = 1.0;
+
+    /*
+      If iOS has already loaded voices, use an English voice. If the list is
+      empty, leave voice unset — iOS will use its default English voice.
+    */
+    let voices = [];
+    try{ voices = synth.getVoices() || []; }catch(e){}
+    const voice =
+      voices.find(v => /^en-US$/i.test(v.lang)) ||
+      voices.find(v => /^en(-|_)/i.test(v.lang)) ||
+      voices.find(v => /English/i.test(v.name || ""));
+    if(voice) u.voice = voice;
+
+    synth.speak(u);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+/* First real interaction unlocks both speech and the celebration audio. */
+function unlockAllAudio(){
+  unlockSpeech();
+  try{
+    const a = document.getElementById("clapAudio");
+    if(a){
+      a.volume = 1;
+      a.muted = true;
+      const p = a.play();
+      if(p && p.then){
+        p.then(()=>{
+          a.pause();
+          a.currentTime = 0;
+          a.muted = false;
+        }).catch(()=>{ a.muted = false; });
+      }
     }
   }catch(e){}
-  speechReady=true;
-}
-if(window.speechSynthesis){
-  try{ window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices(); }catch(e){}
 }
 
-function speak(text){
-  try{
-    if(!window.speechSynthesis || !window.SpeechSynthesisUtterance)return;
-    const synth=window.speechSynthesis;
-    unlockSpeech();
-    synth.cancel();
-    const u=new SpeechSynthesisUtterance(String(text));
-    u.lang='en-US';
-    u.rate=.78;
-    u.pitch=1.15;
-    u.volume=1.0;
-    // IMPORTANT for iPhone Safari: speak synchronously from the user's
-    // tap/click instead of putting synth.speak() inside setTimeout().
-    synth.resume();
-    synth.speak(u);
-  }catch(e){}
-}
+document.addEventListener("pointerdown", unlockAllAudio, {once:true, passive:true});
+document.addEventListener("touchstart", unlockAllAudio, {once:true, passive:true});
+document.addEventListener("click", unlockAllAudio, {once:true, passive:true});
 
-// Unlock speech/audio on the first real user interaction.
-document.addEventListener('touchstart',unlockSpeech,{once:true,passive:true});
-document.addEventListener('click',unlockSpeech,{once:true,passive:true});
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden){
+    try{
+      if(window.speechSynthesis) window.speechSynthesis.resume();
+    }catch(e){}
+  }
+});
 
 /* ---------- REAL ANIMAL SOUNDS ----------
    Actual animal recordings — no generated tones and no
@@ -354,8 +430,20 @@ function playRealAnimalSound(name){
     audio.playsInline=true;
     audio.volume=1.0;
     currentAnimalAudio=audio;
-    audio.play().catch(()=>{});
-  }catch(e){}
+
+    /*
+      If a remote Wikimedia recording is unavailable/offline, do NOT leave
+      the child with silence. Fall back to the same learning-name speech
+      engine used everywhere else.
+    */
+    audio.onerror=()=>speak(name);
+    const p=audio.play();
+    if(p && p.catch){
+      p.catch(()=>speak(name));
+    }
+  }catch(e){
+    speak(name);
+  }
 }
 
 /* ---------- Animals ---------- */
@@ -791,17 +879,30 @@ if(diff)diff.onchange=()=>renderGame();
 
 updateDailyGoal();
 
-/* ---------- Shapes: use the SAME speech logic as Colours and Numbers ---------- */
+/* ---------- Shapes: SAME unified sound engine as every other section ---------- */
 const shapeCards=document.querySelectorAll('#shapeGrid .shape-card');
+
 shapeCards.forEach(card=>{
   card.type='button';
   const name=card.dataset.shapeName || card.textContent.trim();
-  card.setAttribute('aria-label','Hear '+name);
-  // EXACT same path as Colours, Numbers and ABCD: direct onclick -> speak().
-  card.onclick=()=>{
+
+  /*
+    pointerdown is the earliest direct user gesture on iPhone/iPad.
+    It calls the exact same speak() used by Numbers, Colours and ABCD.
+  */
+  card.addEventListener('pointerdown',(event)=>{
+    if(event.pointerType === 'mouse' && event.button !== 0) return;
     speak(name);
-    card.animate([{transform:'scale(1)'},{transform:'scale(1.07)'},{transform:'scale(1)'}],{duration:350});
-  };
+
+    card.animate(
+      [
+        {transform:'scale(1)'},
+        {transform:'scale(1.07)'},
+        {transform:'scale(1)'}
+      ],
+      {duration:350}
+    );
+  },{passive:true});
 });
 
 /* ---------- Drawing Board ---------- */
