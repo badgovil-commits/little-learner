@@ -791,34 +791,15 @@ if(diff)diff.onchange=()=>renderGame();
 
 updateDailyGoal();
 
-/* ---------- Shapes: reliable iPhone/iPad sound ---------- */
-function speakShape(name){
-  try{
-    if(!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) return;
-    const synth=window.speechSynthesis;
-    synth.cancel();
-    synth.resume();
-    const utterance=new SpeechSynthesisUtterance(name);
-    utterance.lang='en-US';
-    utterance.rate=0.72;
-    utterance.pitch=1.12;
-    utterance.volume=1.0;
-    const voices=synth.getVoices();
-    const voice=voices.find(v=>/^en(-|_)/i.test(v.lang)) || voices.find(v=>/English/i.test(v.name));
-    if(voice) utterance.voice=voice;
-    synth.speak(utterance);
-    setTimeout(()=>{try{if(synth.paused)synth.resume();}catch(e){}},80);
-  }catch(e){}
-}
-
+/* ---------- Shapes: use the SAME speech logic as Colours and Numbers ---------- */
 const shapeCards=document.querySelectorAll('#shapeGrid .shape-card');
 shapeCards.forEach(card=>{
   card.type='button';
-  card.onclick=(event)=>{
-    event.preventDefault();
-    event.stopPropagation();
-    const name=card.dataset.shapeName || card.textContent.trim();
-    speakShape(name);
+  const name=card.dataset.shapeName || card.textContent.trim();
+  card.setAttribute('aria-label','Hear '+name);
+  // EXACT same path as Colours, Numbers and ABCD: direct onclick -> speak().
+  card.onclick=()=>{
+    speak(name);
     card.animate([{transform:'scale(1)'},{transform:'scale(1.07)'},{transform:'scale(1)'}],{duration:350});
   };
 });
