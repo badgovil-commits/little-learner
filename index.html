@@ -760,15 +760,28 @@ if(diff)diff.onchange=()=>renderGame();
 
 updateDailyGoal();
 
-/* ---------- Shapes: exactly the same sound execution as Colours/Numbers/ABCD ---------- */
-document.querySelectorAll('#shapeGrid .shape-card').forEach(card=>{
-  card.type='button';
-  const name=card.dataset.shapeName||card.textContent.trim();
-  card.onclick=()=>{
-    speak(name);
-    card.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
-  };
-});
+/* ---------- Shapes audio FINAL FIX ---------- */
+(function(){
+  const grid=document.getElementById('shapeGrid');
+  if(!grid) return;
+
+  // One delegated click path, using the exact same speak() engine as
+  // Colours, Numbers and ABCD. No separate audio/voice logic is used.
+  grid.addEventListener('click',function(event){
+    const card=event.target.closest('.shape-card');
+    if(!card || !grid.contains(card)) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const name=card.getAttribute('data-shape-name');
+    if(name) speak(name);
+
+    card.animate(
+      [{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],
+      {duration:350}
+    );
+  },true);
+})();
 
 /* ---------- Drawing Board ---------- */
 (function(){
