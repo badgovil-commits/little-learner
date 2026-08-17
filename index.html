@@ -760,14 +760,12 @@ if(diff)diff.onchange=()=>renderGame();
 
 updateDailyGoal();
 
-/* ---------- Shapes: same simple sound execution as Colours/Numbers/ABCD ---------- */
+/* ---------- Shapes: exactly the same sound execution as Colours/Numbers/ABCD ---------- */
 document.querySelectorAll('#shapeGrid .shape-card').forEach(card=>{
   card.type='button';
   const name=card.dataset.shapeName||card.textContent.trim();
   card.onclick=()=>{
-    // Shapes intentionally use the same speech path as the other learning tabs.
-    // Do not use a separate shape-audio player or embedded shape clip here.
-    fallbackSpeech(name);
+    speak(name);
     card.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:350});
   };
 });
