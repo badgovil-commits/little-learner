@@ -760,53 +760,16 @@ if(diff)diff.onchange=()=>renderGame();
 
 updateDailyGoal();
 
-/* ---------- Shapes audio FINAL FIX ---------- */
-/*
-   Shapes use the existing embedded learningAudioBank.
-   The shape buttons play their own embedded clip directly,
-   avoiding delegated event handling and leaving all other tabs unchanged.
-*/
+/* ---------- Shapes ---------- */
+/* Shapes intentionally use the SAME learning sound path as Colours and Numbers. */
 (function(){
   const grid=document.getElementById("shapeGrid");
-  if(!grid) return;
-
-  let shapeAudio=null;
-
-  function playShapeAudio(name){
-    if(!name) return;
-
-    try{
-      if(shapeAudio){
-        shapeAudio.pause();
-        shapeAudio.currentTime=0;
-      }
-
-      const src=learningAudioBank[name];
-
-      if(src){
-        const a=new Audio(src);
-        a.preload="auto";
-        a.playsInline=true;
-        a.volume=1;
-        shapeAudio=a;
-
-        const p=a.play();
-        if(p && p.catch){
-          p.catch(()=>speak(name));
-        }
-      }else{
-        speak(name);
-      }
-    }catch(e){
-      speak(name);
-    }
-  }
+  if(!grid)return;
 
   grid.querySelectorAll(".shape-card").forEach(card=>{
     const name=card.getAttribute("data-shape-name");
-
     card.onclick=()=>{
-      playShapeAudio(name);
+      speak(name);
       card.animate(
         [{transform:"scale(1)"},{transform:"scale(1.08)"},{transform:"scale(1)"}],
         {duration:350}
